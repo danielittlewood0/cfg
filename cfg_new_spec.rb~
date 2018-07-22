@@ -48,7 +48,24 @@ describe PseudoString do
 		ls = ps([x])
 		rs = ps([a,a])
 		rul = rule(ls,rs) 
-		expect(ls.apply(rul).read).to eq "aa"
+		expect(ls.apply(rul).write).to eq "aa"
+	end
+
+	it 'eg2' do
+		x = 'X'.nt
+    y = 'Y'.nt
+		a = 'a'.t
+    non_terms = ['X','Y']
+    terms = ['a']
+    line_1 = 'X'.to_pseudo(non_terms,terms)
+    line_2 = 'YY'.to_pseudo(non_terms,terms)
+    line_3 = 'aY'.to_pseudo(non_terms,terms)
+
+    r_1 = rule(ps([x]),line_2)
+    r_2 = rule(ps([y]),ps([a]))
+		expect(line_1.apply(r_1)).to eq line_2
+		expect(line_2.apply(r_2)).to eq line_3
+		expect(line_2.apply(r_1)).to eq line_2
 	end
 
 end

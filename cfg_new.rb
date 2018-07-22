@@ -55,14 +55,22 @@ class PseudoString
 		@chars = chars
 	end
 
-	def read
+	def write
 		@chars.map{|c| c.char}.join('')
 	end	
 
+  def ==(other)
+    self.write == other.write
+  end
+
 	def apply(rule)
 		i = self.chars.index(rule.ls.chars.first)
-		new_chars = chars[0...i] + rule.rs.chars + chars[i+1..-1]
-		return ps(new_chars)		
+    if i.nil?
+      return self
+    else
+      new_chars = chars[0...i] + rule.rs.chars + chars[i+1..-1]
+      return ps(new_chars)		
+    end
 	end
 end
 
