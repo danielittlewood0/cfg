@@ -38,6 +38,18 @@ describe NonTerminal do
   end
 end
 
+describe Move do 
+  it 'represents a move being applied at some index' do
+    ls = "X".to_pseudo
+    rs = "aa".to_pseudo
+    rule = rule(ls,rs)
+    move = move(rule,1)
+    expect(move.class).to eq Move 
+    expect(move.index).to eq 1
+    expect(move.rule).to eq rule
+  end
+end
+
 describe String do 
   describe '#nt' do
     it 'factory' do
@@ -166,36 +178,97 @@ describe PseudoString do
     end
     unapplied_1 = applied.unapply_at(0,rul)
     it '#unapply_at undoes this application (but needs index)' do
-      expect(unapplied).to eq ls
+      expect(unapplied_1).to eq ls
     end
     unapplied_2 = applied.unapply(rul)
     it '#unapply undoes the leftmost instance' do
+      expect(unapplied_2).to eq ls
+    end
+  end
 
+  describe '#scan,#possible_undos' do
+    word = "aaaababababaababababaaababa".to_pseudo
+    ls = "X".to_pseudo
+    rs = "aa".to_pseudo
+    rule = rule(ls,rs)
+    it 'finds all the indices a subword begins at' do
+      indices = word.scan("aa".to_pseudo)
+      expect(indices).to eq [0,1,2,11,20,21]
+    end
+    it 'fixed bug in #unapply' do
+      expect(word.unapply_at(1,rule).write).to eq "aXababababaababababaaababa"
+    end
+   it 'finds all possible words an application could have come from' do
+     possible_undos = word.possible_undos([rule])
+     expect(possible_undos.map{|w| w.write}).to eq ["Xaababababaababababaaababa",
+                                                    "aXababababaababababaaababa",
+                                                    "aaXbabababaababababaaababa",
+                                                    "aaaababababXbabababaaababa",
+                                                    "aaaababababaababababXababa",
+                                                    "aaaababababaababababaXbaba"]
+   end
+  end
+
+  describe '#parse,#try_unapply,#unapply_failed' do
+    r_0 = rule("S".to_pseudo,"SS".to_pseudo)
+    r_1 = rule("S".to_pseudo,"Y".to_pseudo)
+    r_2 = rule("Y".to_pseudo,"YXY".to_pseudo)
+    r_3 = rule("Y".to_pseudo,"a".to_pseudo)
+    r_4 = rule("X".to_pseudo,"b".to_pseudo)
+    start = "S".to_pseudo
+    rules = [r_0,r_1,r_2,r_3,r_4]
+    given = "aaabaabaaa".to_pseudo
+#   given = "aba".to_pseudo
+    context 'first move' do
+      past_moves = []
+      moves_to_try = []
+      given.initial_setup(rules,start,past_moves,moves_to_try)
+
+     xit 'initializes' do
+        expect(past_moves).to eq []
+        expect(moves_to_try[0].map{|m| given.unapply_at(m.index,m.rule).write}).to eq ["Yaabaabaaa", 
+            "aYabaabaaa",
+            "aaYbaabaaa",
+            "aaabYabaaa",
+            "aaabaYbaaa",
+            "aaabaabYaa",
+            "aaabaabaYa",
+            "aaabaabaaY",
+            "aaaXaabaaa",
+            "aaabaaXaaa"]
+      end
+
+      it '#parses' do
+        $LOOPER = 0
+        step_1 = given.parse(rules,start,past_moves,moves_to_try)
+        puts step_1.write
+      end
+      
+      
+    end
+  end
+
+ xdescribe 'eg2' do
+    it '' do
+      x = 'X'.nt
+      y = 'Y'.nt
+      a = 'a'.t
+      non_terms = ['X','Y']
+      terms = ['a']
+      line_1 = 'X'.to_pseudo(non_terms,terms)
+      line_2 = 'YY'.to_pseudo(non_terms,terms)
+      line_3 = 'aY'.to_pseudo(non_terms,terms)
+
+      r_1 = rule(ps([x]),line_2)
+      r_2 = rule(ps([y]),ps([a]))
+      p line_3.unapply(r_2,0)
+      p r_2.rs
+      p line_3.index(r_2.rs)
+      p line_3.possible_undos([r_1,r_2])
+      expect(line_1.apply(r_1)).to eq line_2
+      expect(line_2.apply(r_2)).to eq line_3
+      expect(line_2.apply(r_1)).to eq line_2
     end
   end
 
 end
-#  xdescribe 'eg2' do
-#    it '' do
-#      x = 'X'.nt
-#      y = 'Y'.nt
-#      a = 'a'.t
-#      non_terms = ['X','Y']
-#      terms = ['a']
-#      line_1 = 'X'.to_pseudo(non_terms,terms)
-#      line_2 = 'YY'.to_pseudo(non_terms,terms)
-#      line_3 = 'aY'.to_pseudo(non_terms,terms)
-#
-#      r_1 = rule(ps([x]),line_2)
-#      r_2 = rule(ps([y]),ps([a]))
-#      p line_3.unapply(r_2,0)
-#      p r_2.rs
-#      p line_3.index(r_2.rs)
-#      p line_3.possible_undos([r_1,r_2])
-#      expect(line_1.apply(r_1)).to eq line_2
-#      expect(line_2.apply(r_2)).to eq line_3
-#      expect(line_2.apply(r_1)).to eq line_2
-#    end
-#  end
-#
-#end
