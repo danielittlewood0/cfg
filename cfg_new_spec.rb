@@ -240,7 +240,8 @@ describe PseudoString do
 
       it '#parses' do
         $LOOPER = 0
-        step_1 = given.parse(rules,start,past_moves,moves_to_try)
+        step_1 = given.parse(rules)
+        #,start,past_moves,moves_to_try)
         puts step_1.write
       end
       

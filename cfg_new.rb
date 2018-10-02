@@ -6,8 +6,7 @@ class Terminal
   end
 
   def ==(other)
-    self.class == other.class &&
-    self.char == other.char
+    other.is_a?(Terminal) && self.char == other.char
   end
 
 end
@@ -20,8 +19,7 @@ class NonTerminal
   end
 
   def ==(other)
-    self.class == other.class &&
-    self.char == other.char
+    other.is_a?(NonTerminal) && self.char == other.char
   end
 
 end
@@ -78,31 +76,6 @@ class PseudoString
     chars.length
   end
 
-  def apply(rule)
-    i = self.chars.index(rule.ls.chars.first)
-    if i.nil?
-      return self
-    else
-      return self[0...i] + rule.rs + self[i+1..-1]
-    end
-  end
-  
-  def apply_at(i,rule)
-    return self[0...i] + rule.rs + self[i+1..-1]
-  end
-
-  def unapply_at(index,rule)
-    rs = rule.rs
-    proposed_rs = self[index...index + rs.length]
-    if rs == proposed_rs
-      after = index + rs.length
-      return self[0...index] + rule.ls + self[after..-1]
-    else
-      raise "#{rs.write} is different from #{proposed_rs.write}"
-      return nil
-    end
-  end
-
   def index(word)
     for i in 0...self.length 
       if self[i...i+word.chars.length] == word
@@ -110,6 +83,27 @@ class PseudoString
       end
     end
     return nil 
+  end
+  
+  def apply_at(i,rule)
+    raise "nil index" if i.nil?
+    self[0...i] + rule.rs + self[i+1..-1]
+  end
+
+  def apply(rule)
+    i = self.chars.index(rule.ls.chars.first)
+    apply_at(i,rule)
+  end
+
+  def unapply_at(i,rule)
+    rs = rule.rs
+    proposed_rs = self[i...i + rs.length]
+    if rs == proposed_rs
+      after = i + rs.length
+      return self[0...i] + rule.ls + self[after..-1]
+    else
+      raise "#{rs.write} is different from #{proposed_rs.write}"
+    end
   end
 
   def unapply(rule)
@@ -127,7 +121,8 @@ class PseudoString
   end
 
   def possible_undos(rules)
-    rules.map{|rule| scan(rule.rs).map{|i| unapply_at(i,rule)}}.flatten
+    rules.map{|rule| scan(rule.rs).
+              map{|i| unapply_at(i,rule)}}.flatten
   end
 
   def possible_last_moves(rules)
@@ -228,6 +223,54 @@ class PseudoString
 
 
   end
+
+
+
+
+  def parse(rules)
+    derivation = []
+    moves = []
+    derivation << self
+    moves << possible_undos(rules)
+    if moves[-1].empty?
+      moves.pop
+      derivation.pop
+    else
+      try = moves[-1].pop
+      puts try.write
+      try.parse(rules)
+    end
+      
+
+
+  end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 end
 
 class ProductionRule 
