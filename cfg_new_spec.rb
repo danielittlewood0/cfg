@@ -218,37 +218,18 @@ describe PseudoString do
     start = "S".to_pseudo
     rules = [r_0,r_1,r_2,r_3,r_4]
     given = "aaabaabaaa".to_pseudo
-#   given = "aba".to_pseudo
-    context 'first move' do
-      past_moves = []
-      moves_to_try = []
-      given.initial_setup(rules,start,past_moves,moves_to_try)
-
-     xit 'initializes' do
-        expect(past_moves).to eq []
-        expect(moves_to_try[0].map{|m| given.unapply_at(m.index,m.rule).write}).to eq ["Yaabaabaaa", 
-            "aYabaabaaa",
-            "aaYbaabaaa",
-            "aaabYabaaa",
-            "aaabaYbaaa",
-            "aaabaabYaa",
-            "aaabaabaYa",
-            "aaabaabaaY",
-            "aaaXaabaaa",
-            "aaabaaXaaa"]
-      end
+    context '' do
 
       it '#parses' do
-        $LOOPER = 0
-        step_1 = given.parse(rules,start,past_moves,moves_to_try)
-        puts step_1.write
+        step_1 = given.parse(rules)
+        puts step_1.map{|w| w.write}
       end
       
       
     end
   end
 
- xdescribe 'eg2' do
+  describe 'eg2' do
     it '' do
       x = 'X'.nt
       y = 'Y'.nt
@@ -261,10 +242,10 @@ describe PseudoString do
 
       r_1 = rule(ps([x]),line_2)
       r_2 = rule(ps([y]),ps([a]))
-      p line_3.unapply(r_2,0)
-      p r_2.rs
-      p line_3.index(r_2.rs)
-      p line_3.possible_undos([r_1,r_2])
+   #  p line_3.unapply(r_2,0)
+   #  p r_2.rs
+   #  p line_3.index(r_2.rs)
+   #  p line_3.possible_undos([r_1,r_2])
       expect(line_1.apply(r_1)).to eq line_2
       expect(line_2.apply(r_2)).to eq line_3
       expect(line_2.apply(r_1)).to eq line_2
