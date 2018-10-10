@@ -129,148 +129,18 @@ class PseudoString
     rules.map{|rule| scan(rule.rs).map{|i| move(rule,i)}}.flatten
   end
 
-# def try_unapply(rules,start,past_moves,moves_to_try)
-#   move_to_
-#   past_moves << 
-#   add_moves_to_try_to_remaining_move_stack
-#   parse(rules,start,past_moves,moves_to_try)
-# end
-
-# def unapply_failed(rules,start,past_moves,moves_to_try)
-#   past_moves.pop
-#   
-#   if not_empty
-#     add_head_to_move_stack
-#     put_rest_back
-#   else
-#     backtrack
-#   end
-
-# end
-
-  def pop_move_off_stack(rules,start,past_moves,moves_to_try)
-    move_to_try = moves_to_try.last.pop
-    past_moves << move_to_try
-    string = unapply_at(move_to_try.index,move_to_try.rule)
-    moves_to_try << string.possible_last_moves(rules)
-    return string
-  end
-
-  def undo_most_recent_move(rules,start,past_moves,moves_to_try)
-    move_to_undo = past_moves.pop
-    m = move_to_undo
-    puts "Applying rule #{m.rule.ls.write} => #{m.rule.rs.write} at index #{m.index} to string #{write}"
-    raise 'last moves_to_try should be empty' unless moves_to_try.last.empty?
-    moves_to_try.pop
-    res = apply_at(move_to_undo.index,move_to_undo.rule)
-    puts res.write
-    return res
-  end
-
-  def initial_setup(rules,start,past_moves,moves_to_try)
-    moves_to_try << possible_last_moves(rules)
-  end
-
-  def parse(rules,start,past_moves=[],moves_to_try=[])
-    $LOOPER += 1
-#   raise "too much looping!" if $LOOPER > 1000
-#   puts "hello"
-    puts write
-#   puts past_moves.length
-#   puts moves_to_try.last.length unless moves_to_try.empty?
-#    descend parse tree = apply rule 
-#    so to ascend parse tree we must know all rules we could have applied
-#    for each rule, check whether it could have been applied possible_rhs = rules.map{|r| r.rhs}
-    if moves_to_try.empty?
-      initial_setup(rules,start,past_moves,moves_to_try)
-    end
-    if self == start
-      past_moves = past_moves.reverse
-        res = start 
-      for i in 0...past_moves.length 
-        move = past_moves[i]
-        p past_moves[i].rule.ls.write
-        line =  "Apply #{move.rule.ls.write} => #{move.rule.rs.write} at #{move.index} to #{res.write}"
-        res = res.apply_at(move.index,move.rule)
-        line += " to get #{res.write}..."
-        puts line
-      end
-      raise 'You win!'
-    end
-    #check for failures
-    if past_moves.empty? && moves_to_try.last.empty?
-      raise 'Ungrammatical word!'
-    end
-    if moves_to_try.last.empty?
-      puts "going up"
-      string = undo_most_recent_move(rules,start,past_moves,moves_to_try)
-      puts string.write
-#     raise "please stop here sir"
-      return string.parse(rules,start,past_moves,moves_to_try)
-    end
-    puts "going down"
-    #given no failures, apply a move
-    string = pop_move_off_stack(rules,start,past_moves,moves_to_try)
-   #return string
-    return string.parse(rules,start,past_moves,moves_to_try)
-#   to_try_from_here = possible_last_moves(rules)
-#   if to_try_from_here.empty? 
-#     return unapply_failed
-#   else
-#     result = 
-#     return 
-#   end
-
-
-  end
-
-
-
-
-  def parse(rules)
-    derivation = []
-    moves = []
-    derivation << self
+  def parse(rules,derivation=[self],moves=[])
     moves << possible_undos(rules)
     if moves[-1].empty?
       moves.pop
       derivation.pop
     else
       try = moves[-1].pop
-      puts try.write
-      try.parse(rules)
+      try.parse(rules,derivation,moves)
+      derivation << try
     end
-      
-
-
+    derivation
   end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 end
 
 class ProductionRule 

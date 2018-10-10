@@ -68,7 +68,6 @@ badd +0 cfg_new.rb
 badd +0 cfg_new_spec.rb
 argglobal
 silent! argdel *
-$argadd cfg_new.rb
 edit cfg_new.rb
 set splitbelow splitright
 wincmd _ | wincmd |
@@ -79,8 +78,8 @@ set nosplitbelow
 set nosplitright
 wincmd t
 set winminheight=1 winheight=1 winminwidth=1 winwidth=1
-exe 'vert 1resize ' . ((&columns * 81 + 75) / 150)
-exe 'vert 2resize ' . ((&columns * 68 + 75) / 150)
+exe 'vert 1resize ' . ((&columns * 64 + 75) / 150)
+exe 'vert 2resize ' . ((&columns * 85 + 75) / 150)
 argglobal
 nnoremap <buffer> <silent> g} :exe        "ptjump =RubyCursorIdentifier()"
 nnoremap <buffer> <silent> } :exe          "ptag =RubyCursorIdentifier()"
@@ -118,7 +117,7 @@ setlocal cryptmethod=
 setlocal nocursorbind
 setlocal nocursorcolumn
 setlocal nocursorline
-setlocal define=^\\s*#\\s*define
+setlocal define=
 setlocal dictionary=
 setlocal nodiff
 setlocal equalprg=
@@ -205,12 +204,12 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 240 - ((13 * winheight(0) + 19) / 39)
+let s:l = 175 - ((38 * winheight(0) + 19) / 39)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-240
-normal! 020|
+175
+normal! 0
 wincmd w
 argglobal
 if bufexists('cfg_new_spec.rb') | buffer cfg_new_spec.rb | else | edit cfg_new_spec.rb | endif
@@ -337,15 +336,15 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 245 - ((25 * winheight(0) + 19) / 39)
+let s:l = 249 - ((32 * winheight(0) + 19) / 39)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-245
-normal! 022|
+249
+normal! 04|
 wincmd w
-exe 'vert 1resize ' . ((&columns * 81 + 75) / 150)
-exe 'vert 2resize ' . ((&columns * 68 + 75) / 150)
+exe 'vert 1resize ' . ((&columns * 64 + 75) / 150)
+exe 'vert 2resize ' . ((&columns * 85 + 75) / 150)
 tabnext 1
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf
