@@ -33,6 +33,9 @@ class String
         new_chars << NonTerminal.new(c)
       elsif terms.include?(c)
         new_chars << Terminal.new(c)
+      else 
+        new_chars << Terminal.new(c)
+#       raise "No known character: |#{c}|"
       end
     end
     return ps(new_chars)
@@ -123,6 +126,9 @@ class PseudoString
   def possible_undos(rules)
     rules.map{|rule| scan(rule.rs).
               map{|i| unapply_at(i,rule)}}.flatten
+    rules.map{|rule| scan(rule.rs).
+              map{|i| [unapply_at(i,rule),i]}}.flatten(1).
+              sort_by{|arr| arr[-1]}.map(&:first)
   end
 
   def possible_last_moves(rules)
@@ -130,6 +136,20 @@ class PseudoString
   end
 
   def parse(rules,derivation=[self],moves=[])
+    moves << possible_undos(rules)
+    if moves[-1].empty?
+      moves.pop
+      derivation.pop
+    else
+      try = moves[-1].pop
+      try.parse(rules,derivation,moves)
+      derivation << try
+    end
+    derivation
+  end
+
+  # this is the same as parse
+  def parse_moves(rules,derivation=[self],moves=[])
     moves << possible_undos(rules)
     if moves[-1].empty?
       moves.pop
@@ -150,9 +170,13 @@ class ProductionRule
     @ls = ls
     @rs = rs 
   end
+
+  def write
+    ls.write + " --> " + rs.write
+  end
 end
 
-class Move
+class Move # subclass of ProductionRule?
   attr_accessor :rule, :index
 
   def initialize(rule,index)
@@ -167,6 +191,7 @@ end
 
 
 def ps(chars)
+  raise "chars should be array!" if !chars.is_a?(Array)
   PseudoString.new(chars) 
 end
 
