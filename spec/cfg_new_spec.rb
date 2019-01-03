@@ -252,4 +252,73 @@ describe PseudoString do
     end
   end
 
+
+  describe "#to_abstract_word" do 
+    it "converts all chars into abstract chars" do
+      pseudo = "abCD".to_pseudo
+      abstract = pseudo.to_abstract
+      expect(abstract.class).to eq AbstractWord
+      abstract_chars = abstract.abstract_chars
+      check = abstract_chars.all?{|char| char.class == AbstractChar}
+      expect(check).to eq true
+    end
+  end
+end
+
+describe AbstractWord do
+  describe "#to_pseudo" do 
+    it "forgets structure" do
+      pseudo = "abCD".to_pseudo
+      abstract = pseudo.to_abstract
+      expect(abstract.to_pseudo).to eq pseudo
+    end
+  end
+
+  describe "#write" do 
+    it "writes out the top level chars" do
+      abstract = "abCD".to_pseudo.to_abstract
+      expect(abstract.write).to eq "abCD"
+    end
+  end
+  
+  describe "==" do
+    it "compares array of characters" do
+      abstract_1 = "abCD".to_pseudo.to_abstract
+      abstract_2 = "abCD".to_pseudo.to_abstract
+      expect(abstract_1).to eq abstract_2
+    end
+  end
+
+  describe "+" do
+    it "concatenates chars" do
+      abstract_1 = "abCD".to_pseudo.to_abstract
+      abstract_2 = "Efg".to_pseudo.to_abstract
+      expect((abstract_1 + abstract_2).write).to eq "abCDEfg"
+    end
+  end
+
+  describe "[]" do
+    it "selects from the chars array" do
+      abstract_1 = "abCD".to_pseudo.to_abstract
+      abstract_2 = abstract_1[1..2]
+      expect(abstract_2.write).to eq "bC"
+    end
+  end
+
+  describe "length" do
+    it "length of the chars array" do
+      abstract_1 = "abCD".to_pseudo.to_abstract
+      abstract_2 = abstract_1[1..2]
+      expect(abstract_1.length).to eq 4
+      expect(abstract_2.length).to eq 2
+    end
+  end
+
+  describe "index" do
+    it "given a pseudo string, gives the first appearance in chars" do
+      abstract = "abaabab".to_pseudo.to_abstract
+      pseudo = "aab".to_pseudo
+      expect(abstract.index(pseudo)).to eq 2
+    end
+  end
 end
