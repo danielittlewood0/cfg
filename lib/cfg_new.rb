@@ -190,14 +190,25 @@ class AbstractChar
   end
 
   def ==(other_char)
-    self.char == other_char.char
+    (self.class == other_char.class) && 
+    (self.char == other_char.char) &&
+    (self.child_nodes == other_char.child_nodes) &&
+    (self.parent == other_char.parent) &&
+    (self.move == other_char.move)
+
   end
 
   def init_from_move(move)
-    @move = move
     @char = move.ls
+    @move = move
     @children = moves.rs.chars
     @children.each{|child| child.parent = self}
+  end
+
+  def tree_view(i=0)
+    child_nodes = self.child_nodes || []
+    " "*i + self.char.char + "\n" + 
+      child_nodes.map{|n| n.tree_view(i+2)}.join("\n")
   end
 end
 
@@ -251,59 +262,58 @@ class AbstractWord
 #    i = self.chars.index(rule.ls.chars.first)
 #    apply_at(i,rule)
 #  end
-#
-#  def unapply_at(i,rule)
-#    rs = rule.rs
-#    proposed_rs = self[i...i + rs.length]
-#    if rs == proposed_rs
-#      after = i + rs.length
-#      return self[0...i] + rule.ls + self[after..-1]
-#    else
-#      raise "#{rs.write} is different from #{proposed_rs.write}"
-#    end
-#  end
-#
-#  def unapply(rule)
-#    unapply_at(index(rule.rs),rule)
-#  end
-#
-#  def scan(word)
-#    indices = []
-#    for i in 0...self.chars.length 
-#      if chars[i...i+word.chars.length] == word.chars
-#        indices << i
-#      end
-#    end
-#    return indices 
-#  end
-#
-#  def possible_undos(rules)
-#    rules.map{|rule| scan(rule.rs).
-#              map{|i| unapply_at(i,rule)}}.flatten
-#    rules.map{|rule| scan(rule.rs).
-#              map{|i| [unapply_at(i,rule),i]}}.flatten(1).
-#              sort_by{|arr| arr[-1]}.map(&:first)
-#  end
-#
-#  def possible_last_moves(rules)
-#    rules.map{|rule| scan(rule.rs).map{|i| move(rule,i)}}.flatten
-#  end
-#
-#  def parse(rules,derivation=[self],moves=[])
-#    moves << possible_undos(rules)
-#    if moves[-1].empty?
-#      moves.pop
-#      derivation.pop
-#    else
-#      try = moves[-1].pop
-#      try.parse(rules,derivation,moves)
-#      derivation << try
-#    end
-#    derivation
-#  end
-#  def construct_tree
-#
-#  end
+
+  def unapply_at(i,rule)
+    rs = rule.rs
+    proposed_rs = self[i...i + rs.length]
+    if rs == proposed_rs.to_pseudo
+      after = i + rs.length
+      proposed_ls = rule.ls.to_abstract 
+      ls_char = proposed_ls.abstract_chars.first # should be uniq
+      proposed_rs.abstract_chars.each{|x| x.parent = ls_char}
+      ls_char.move = rule 
+      ls_char.child_nodes = proposed_rs.abstract_chars
+      return self[0...i] + proposed_ls + self[after..-1]
+    else
+      raise "#{rs.write} is different from #{proposed_rs.write}"
+    end
+  end
+
+  def unapply(rule)
+    unapply_at(index(rule.rs),rule)
+  end
+
+  def scan(word)
+    indices = []
+    for i in 0...self.abstract_chars.length 
+      if self[i...i+word.chars.length].to_pseudo == word
+        indices << i
+      end
+    end
+    return indices 
+  end
+
+  def possible_undos(rules)
+    rules.map{|rule| scan(rule.rs).
+              map{|i| unapply_at(i,rule)}}.flatten
+  end
+
+  def parse(rules,derivation=[self],moves=[])
+    moves << possible_undos(rules)
+    if moves[-1].empty?
+      moves.pop
+      derivation.pop
+    else
+      try = moves[-1].pop
+      try.parse(rules,derivation,moves)
+      derivation << try
+    end
+    derivation
+  end
+
+  def tree_view
+    abstract_chars.map{|n| n.tree_view}.join("\n")#.join("\n_\n")
+  end
 end
 
 class PseudoString 

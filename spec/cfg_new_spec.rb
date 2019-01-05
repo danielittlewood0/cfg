@@ -209,7 +209,7 @@ describe PseudoString do
    end
   end
 
-  describe '#parse,#try_unapply,#unapply_failed' do
+  xdescribe '#parse,#try_unapply,#unapply_failed' do
     r_0 = rule("S".to_pseudo,"SS".to_pseudo)
     r_1 = rule("S".to_pseudo,"Y".to_pseudo)
     r_2 = rule("Y".to_pseudo,"YXY".to_pseudo)
@@ -229,7 +229,7 @@ describe PseudoString do
     end
   end
 
-  describe 'eg2' do
+  xdescribe 'eg2' do
     it '' do
       x = 'X'.nt
       y = 'Y'.nt
@@ -319,6 +319,89 @@ describe AbstractWord do
       abstract = "abaabab".to_pseudo.to_abstract
       pseudo = "aab".to_pseudo
       expect(abstract.index(pseudo)).to eq 2
+    end
+  end
+
+  describe "unapply_at" do 
+
+    it '#unapply_at undoes this application (but needs index)' do
+      ls = 'X'.to_pseudo
+      rs = 'aa'.to_pseudo
+      rul = rule(ls,rs) 
+      applied = 'aabbabaab'.to_pseudo.to_abstract
+      unapplied_1 = applied.unapply_at(6,rul)
+      expect(unapplied_1.write).to eq 'aabbabXb'
+    end
+
+    it "builds the parse tree" do
+      ls = 'X'.to_pseudo
+      rs = 'aa'.to_pseudo
+      rul = rule(ls,rs) 
+      applied = 'aabbabaab'.to_pseudo.to_abstract
+      unapplied_1 = applied.unapply_at(6,rul)
+      built_tree = 'aabbabXb'.to_pseudo.to_abstract
+      x = built_tree.abstract_chars[6]
+      x.move = rul
+      x.child_nodes = rs.chars.map{|ch| AbstractChar.new(ch)}
+      x.child_nodes.each{|y| y.parent = x}
+      expect(unapplied_1).to eq built_tree
+    end
+
+    it '#unapply_at the leftmost instance' do
+      ls = 'X'.to_pseudo
+      rs = 'aa'.to_pseudo
+      rul = rule(ls,rs) 
+      applied = 'aabbabaab'.to_pseudo.to_abstract
+      unapplied_2 = applied.unapply(rul)
+      built_tree = 'Xbbabaab'.to_pseudo.to_abstract
+      x = built_tree.abstract_chars[0]
+      x.move = rul
+      x.child_nodes = rs.chars.map{|ch| AbstractChar.new(ch)}
+      x.child_nodes.each{|y| y.parent = x}
+      expect(unapplied_2).to eq built_tree
+    end
+  end
+
+  describe "scan" do
+    ls = 'X'.to_pseudo
+    rs = 'aa'.to_pseudo
+    rul = rule(ls,rs) 
+    applied = 'aabbabaab'.to_pseudo.to_abstract
+
+    it 'finds all indices of pseudo_word matching abstract_word' do
+      expect(applied.scan(rs)).to eq [0,6]
+    end
+  end
+
+  describe "possible_undos" do
+    it "Given set of rules, shows all possible previous parse trees" do
+      ls = 'X'.to_pseudo
+      rs = 'aa'.to_pseudo
+      rul = rule(ls,rs) 
+      applied = 'aabbabaab'.to_pseudo.to_abstract
+      u_1 = applied.unapply_at(0,rul)
+      u_2 = applied.unapply_at(6,rul)
+
+      expect(applied.possible_undos([rul])).to eq [u_1,u_2]
+    end
+  end
+
+  describe "parse" do
+    it "Hopefully generates the parse tree for a word" do
+      ls = 'X'.to_pseudo
+      rs = 'aa'.to_pseudo
+      rul = rule(ls,rs) 
+      applied = 'aabbabaab'.to_pseudo.to_abstract
+      parsed = applied.parse([rul]).first
+      puts parsed.tree_view
+    end
+
+    it "example 2" do
+      implies = rule("P".to_pseudo,"(P => P)".to_pseudo)
+      a = rule("P".to_pseudo,"a".to_pseudo)
+      b = rule("P".to_pseudo,"b".to_pseudo)
+      to_parse = "(b => (a => b))".to_pseudo.to_abstract
+      puts to_parse.parse([implies,a,b]).first.tree_view
     end
   end
 end
