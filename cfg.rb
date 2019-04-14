@@ -9,6 +9,9 @@ class Terminal
     other.is_a?(Terminal) && self.char == other.char
   end
 
+  def to_s
+    char
+  end
 end
 
 class NonTerminal 
@@ -22,6 +25,9 @@ class NonTerminal
     other.is_a?(NonTerminal) && self.char == other.char
   end
 
+  def to_s
+    char
+  end
 end
 
 class String
@@ -53,6 +59,10 @@ class PseudoString
 
   def initialize(chars)
     @chars = chars
+  end
+
+  def to_s
+    write
   end
 
   def write
@@ -149,6 +159,10 @@ class ProductionRule
   def initialize(ls,rs)
     @ls = ls
     @rs = rs 
+  end
+
+  def to_s
+    ls.to_s + " -> " + rs.to_s
   end
 end
 
