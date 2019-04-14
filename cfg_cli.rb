@@ -21,5 +21,10 @@ rescue => e
   puts e.message
 end
 
-puts "What word would you like to parse?"
-word = $stdin.gets
+loop do
+  puts "What word would you like to parse?"
+  word = $stdin.gets
+  puts "OK, parsing \"#{word}\"..."
+  puts cfg.parse(word)
+  puts word
+end

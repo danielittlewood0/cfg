@@ -28,11 +28,16 @@ class ContextFreeGrammar
   end
 
   def string_to_pseudo(str)
+    # does not work for multi-char symbols!
     str.to_pseudo
   end
 
   def parse_rule(args)
     ls,rs = args.split(/\s*->\s*/)
     rule(ls.to_pseudo,rs.to_pseudo)
+  end
+
+  def parse(str)
+    string_to_pseudo(str).parse(rules)
   end
 end

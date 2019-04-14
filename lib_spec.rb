@@ -1,4 +1,4 @@
-load './cfg_new.rb'
+load './lib.rb'
 
 describe Terminal do
   describe '==' do
