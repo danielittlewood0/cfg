@@ -1,0 +1,7 @@
+NON TERMINALS : [X,Y,Z]
+TERMINALS : [a,b,c]
+START : X
+
+RULE : X -> aXb
+RULE : X -> a
+RULE : X -> b
