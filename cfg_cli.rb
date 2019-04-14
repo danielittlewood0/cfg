@@ -21,3 +21,5 @@ rescue => e
   puts e.message
 end
 
+puts "What word would you like to parse?"
+word = $stdin.gets
