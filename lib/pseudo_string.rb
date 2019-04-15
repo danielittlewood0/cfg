@@ -1,58 +1,13 @@
-class Terminal 
-  attr_accessor :char
-
-  def initialize(char)
-    @char = char
-  end
-
-  def ==(other)
-    other.is_a?(Terminal) && self.char == other.char
-  end
-
-end
-
-class NonTerminal 
-  attr_accessor :char
-
-  def initialize(char)
-    @char = char
-  end
-
-  def ==(other)
-    other.is_a?(NonTerminal) && self.char == other.char
-  end
-
-end
-
-class String
-  def to_pseudo(non_terms=('A'..'Z').to_a,terms=('a'..'z').to_a) 
-    chars = self.split('')
-    new_chars = []
-    chars.each do |c| 
-      if non_terms.include?(c)
-        new_chars << NonTerminal.new(c)
-      elsif terms.include?(c)
-        new_chars << Terminal.new(c)
-      end
-    end
-    return ps(new_chars)
-  end
-
-  def nt
-    NonTerminal.new(self)
-  end
-
-  def t
-    Terminal.new(self)
-  end
-
-end
-
+require 'misc.rb'
 class PseudoString 
   attr_accessor :chars 
 
   def initialize(chars)
     @chars = chars
+  end
+
+  def to_s
+    write
   end
 
   def write
@@ -86,7 +41,7 @@ class PseudoString
   end
   
   def apply_at(i,rule)
-    raise "nil index" if i.nil?
+    return self if i.nil?
     self[0...i] + rule.rs + self[i+1..-1]
   end
 
@@ -141,35 +96,4 @@ class PseudoString
     end
     derivation
   end
-end
-
-class ProductionRule 
-  attr_accessor :ls,:rs 
-
-  def initialize(ls,rs)
-    @ls = ls
-    @rs = rs 
-  end
-end
-
-class Move
-  attr_accessor :rule, :index
-
-  def initialize(rule,index)
-    @rule = rule
-    @index = index
-  end
-end
-
-def rule(ls,rs) 
-  ProductionRule.new(ls,rs) 
-end
-
-
-def ps(chars)
-  PseudoString.new(chars) 
-end
-
-def move(rule,index)
-  Move.new(rule,index)
 end

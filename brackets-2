@@ -1,0 +1,14 @@
+NON TERMINALS : [X,Y]
+TERMINALS : [(,),{,},[,]]
+START : X
+
+RULE : X -> (X)
+RULE : X -> ()
+RULE : X -> {X}
+RULE : X -> {}
+RULE : X -> [X]
+RULE : X -> []
+RULE : X -> XX
+RULE : X -> a
+
+

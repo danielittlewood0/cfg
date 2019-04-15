@@ -1,99 +1,4 @@
-load './cfg_new.rb'
-
-describe Terminal do
-  describe '==' do
-    it 'two terminals are equal when they have the same character' do
-      x = 'X'.t
-      y = 'X'.t
-      expect(x.char).to eq 'X'
-      expect(y.char).to eq 'X'
-      expect(x.class).to eq Terminal
-      expect(y.class).to eq Terminal
-      expect(x == y).to eq true
-    end
-  end
-end
-
-describe NonTerminal do
-  describe '==' do
-    it 'two non-terminals are equal when they have the same character' do
-      x = 'x'.nt
-      y = 'x'.nt
-      expect(x.char).to eq 'x'
-      expect(y.char).to eq 'x'
-      expect(x.class).to eq NonTerminal
-      expect(y.class).to eq NonTerminal
-      expect(x == y).to eq true
-    end
-
-    it 'has to be the same class' do
-      x = 'x'.nt
-      y = 'x'.t
-      expect(x.char).to eq 'x'
-      expect(y.char).to eq 'x'
-      expect(x.class).to eq NonTerminal
-      expect(y.class).to eq Terminal
-      expect(x == y).to eq false
-    end
-  end
-end
-
-describe Move do 
-  it 'represents a move being applied at some index' do
-    ls = "X".to_pseudo
-    rs = "aa".to_pseudo
-    rule = rule(ls,rs)
-    move = move(rule,1)
-    expect(move.class).to eq Move 
-    expect(move.index).to eq 1
-    expect(move.rule).to eq rule
-  end
-end
-
-describe String do 
-  describe '#nt' do
-    it 'factory' do
-      x = 'X'.nt
-      expect(x.class).to eq NonTerminal 
-      expect(x.char).to eq 'X' 
-    end
-  end
-
-  describe '#t' do
-    it 'factory' do
-      a = 'a'.t
-      expect(a.class).to eq Terminal 
-      expect(a.char).to eq 'a' 
-    end
-  end
-
-  describe '#to_psuedo' do
-    it 'Given list of terms and non terms, turns string into pseudo string' do
-      non_terms = ["X","Y"]
-      terms = ["a","b"]
-      str = "XXaaXYb".to_pseudo(non_terms,terms)
-      expect(str.class).to eq PseudoString 
-      expect(str.chars).to eq ["X".nt, "X".nt, "a".t, "a".t, "X".nt, "Y".nt, "b".t]
-    end
-  end
-end
-
-describe ProductionRule do 
-  describe '#rule,#ls,#rs' do
-    it 'factory' do
-      x = 'X'.nt
-      a = 'a'.t
-      ls = ps([x])
-      rs = ps([a,a])
-      rul = rule(ls,rs) 
-      expect(rul.class).to eq ProductionRule 
-      expect(rul.ls).to eq ls
-      expect(rul.rs).to eq rs
-    end
-  end
-
-end
-
+require 'pseudo_string'
 describe PseudoString do
   describe '#write' do
     it 'turns a pseudo-string into a string' do
@@ -221,15 +126,37 @@ describe PseudoString do
     context '' do
 
       it '#parses' do
-        step_1 = given.parse(rules)
-        puts step_1.map{|w| w.write}
+         step_1 = given.parse(rules)
+         expect(step_1.map{|w| w.write}).to eq [
+           "S",
+           "SS",
+           "SSS",
+           "SSSS",
+           "SSSSS",
+           "SSSSSS",
+           "YSSSSS",
+           "YYSSSS",
+           "YYYSSS",
+           "YYYYSS",
+           "YYYYYS",
+           "YYYYYY",
+           "YYYXYYYY",
+           "YYYXYYXYYY",
+           "aYYXYYXYYY",
+           "aaYXYYXYYY",
+           "aaaXYYXYYY",
+           "aaaXaYXYYY",
+           "aaaXaaXYYY",
+           "aaaXaaXaYY",
+           "aaaXaaXaaY",
+           "aaaXaaXaaa",
+           "aaabaaXaaa"
+         ]
       end
-      
-      
     end
   end
 
-  describe 'eg2' do
+  describe 'apply' do
     it '' do
       x = 'X'.nt
       y = 'Y'.nt
@@ -242,14 +169,21 @@ describe PseudoString do
 
       r_1 = rule(ps([x]),line_2)
       r_2 = rule(ps([y]),ps([a]))
-   #  p line_3.unapply(r_2,0)
-   #  p r_2.rs
-   #  p line_3.index(r_2.rs)
-   #  p line_3.possible_undos([r_1,r_2])
       expect(line_1.apply(r_1)).to eq line_2
       expect(line_2.apply(r_2)).to eq line_3
       expect(line_2.apply(r_1)).to eq line_2
     end
   end
 
+  describe '#parse' do
+    it 'fail case if doesnt start with start symbol' do
+      r_0 = rule("X".to_pseudo,"aXb".to_pseudo)
+      r_1 = rule("X".to_pseudo,"ab".to_pseudo)
+      start = "X".to_pseudo
+      rules = [r_0,r_1]
+      given = "abb".to_pseudo
+      steps = given.parse(rules)
+      expect(steps).to eq ["Xb".to_pseudo]
+    end
+  end
 end
