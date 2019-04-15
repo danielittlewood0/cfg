@@ -1,7 +1,0 @@
-The non-terminal symbols are: ["X", "Y", "Z"]
-The terminal symbols are: ["a", "b", "c"]
-The start symbol is: X
-The rules are: 
-X -> aXb
-X -> a
-X -> b
