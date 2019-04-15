@@ -1,3 +1,4 @@
+require 'pseudo_string'
 describe PseudoString do
   describe '#write' do
     it 'turns a pseudo-string into a string' do
@@ -125,15 +126,37 @@ describe PseudoString do
     context '' do
 
       it '#parses' do
-        step_1 = given.parse(rules)
-        puts step_1.map{|w| w.write}
+         step_1 = given.parse(rules)
+         expect(step_1.map{|w| w.write}).to eq [
+           "S",
+           "SS",
+           "SSS",
+           "SSSS",
+           "SSSSS",
+           "SSSSSS",
+           "YSSSSS",
+           "YYSSSS",
+           "YYYSSS",
+           "YYYYSS",
+           "YYYYYS",
+           "YYYYYY",
+           "YYYXYYYY",
+           "YYYXYYXYYY",
+           "aYYXYYXYYY",
+           "aaYXYYXYYY",
+           "aaaXYYXYYY",
+           "aaaXaYXYYY",
+           "aaaXaaXYYY",
+           "aaaXaaXaYY",
+           "aaaXaaXaaY",
+           "aaaXaaXaaa",
+           "aaabaaXaaa"
+         ]
       end
-      
-      
     end
   end
 
-  describe 'eg2' do
+  describe 'apply' do
     it '' do
       x = 'X'.nt
       y = 'Y'.nt
@@ -146,14 +169,21 @@ describe PseudoString do
 
       r_1 = rule(ps([x]),line_2)
       r_2 = rule(ps([y]),ps([a]))
-   #  p line_3.unapply(r_2,0)
-   #  p r_2.rs
-   #  p line_3.index(r_2.rs)
-   #  p line_3.possible_undos([r_1,r_2])
       expect(line_1.apply(r_1)).to eq line_2
       expect(line_2.apply(r_2)).to eq line_3
       expect(line_2.apply(r_1)).to eq line_2
     end
   end
 
+  describe '#parse' do
+    it 'fail case if doesnt start with start symbol' do
+      r_0 = rule("X".to_pseudo,"aXb".to_pseudo)
+      r_1 = rule("X".to_pseudo,"ab".to_pseudo)
+      start = "X".to_pseudo
+      rules = [r_0,r_1]
+      given = "abb".to_pseudo
+      steps = given.parse(rules)
+      expect(steps).to eq ["Xb".to_pseudo]
+    end
+  end
 end

@@ -1,5 +1,12 @@
+require 'production_rule.rb'
+require 'terminal.rb'
+require 'non_terminal.rb'
+require 'move.rb'
+require 'pseudo_string.rb'
+
 class String
-  def to_pseudo(non_terms=('A'..'Z').to_a,terms=('a'..'z').to_a) 
+  def to_pseudo(non_terms=('A'..'Z').to_a,terms=('a'..'z').to_a + 
+                ['(',')','[',']','{','}',']'])
     chars = self.split('')
     new_chars = []
     chars.each do |c| 

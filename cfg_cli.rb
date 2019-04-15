@@ -1,4 +1,5 @@
-require './lib/context_free_grammar.rb'
+$LOAD_PATH << 'lib'
+require 'context_free_grammar.rb'
 cfg = ContextFreeGrammar.new
 
 begin 
@@ -19,12 +20,20 @@ begin
 rescue => e
   puts "ERROR!"
   puts e.message
+  raise e
 end
 
 loop do
   puts "What word would you like to parse?"
   word = $stdin.gets.chomp
+  break if word == "exit"
   puts "OK, parsing \"#{word}\"..."
-  puts cfg.parse(word)
-  puts word
+  steps = cfg.parse(word)
+  if steps[0] != ps([cfg.start_sym])
+    puts steps
+    puts "parse failed! The word #{word} is not in the language."
+  else
+    puts steps
+    puts word
+  end
 end

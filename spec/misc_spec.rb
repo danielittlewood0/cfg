@@ -1,9 +1,7 @@
-require_relative '../lib/pseudo_string.rb'
-
+require 'misc'
 describe String do 
   describe '#nt' do
     it 'factory' do
-      p $LOAD_PATH
       x = 'X'.nt
       expect(x.class).to eq NonTerminal 
       expect(x.char).to eq 'X' 

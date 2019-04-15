@@ -1,3 +1,4 @@
+require 'non_terminal'
 describe NonTerminal do
   describe '==' do
     it 'two non-terminals are equal when they have the same character' do

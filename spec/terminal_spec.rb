@@ -1,3 +1,4 @@
+require 'terminal'
 describe Terminal do
   describe '==' do
     it 'two terminals are equal when they have the same character' do

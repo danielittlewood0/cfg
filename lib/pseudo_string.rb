@@ -1,3 +1,4 @@
+require 'misc.rb'
 class PseudoString 
   attr_accessor :chars 
 
@@ -40,7 +41,7 @@ class PseudoString
   end
   
   def apply_at(i,rule)
-    raise "nil index" if i.nil?
+    return self if i.nil?
     self[0...i] + rule.rs + self[i+1..-1]
   end
 
@@ -96,4 +97,3 @@ class PseudoString
     derivation
   end
 end
-

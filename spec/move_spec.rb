@@ -1,3 +1,4 @@
+require 'move'
 describe Move do 
   it 'represents a move being applied at some index' do
     ls = "X".to_pseudo

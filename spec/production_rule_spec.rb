@@ -1,3 +1,4 @@
+require 'production_rule'
 describe ProductionRule do 
   describe '#rule,#ls,#rs' do
     it 'factory' do
