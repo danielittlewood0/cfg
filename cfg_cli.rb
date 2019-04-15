@@ -1,4 +1,4 @@
-require './context_free_grammar.rb'
+require './lib/context_free_grammar.rb'
 cfg = ContextFreeGrammar.new
 
 begin 
