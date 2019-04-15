@@ -23,7 +23,7 @@ end
 
 loop do
   puts "What word would you like to parse?"
-  word = $stdin.gets
+  word = $stdin.gets.chomp
   puts "OK, parsing \"#{word}\"..."
   puts cfg.parse(word)
   puts word

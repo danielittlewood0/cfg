@@ -1,4 +1,4 @@
-require './cfg.rb'
+require './lib.rb'
 class ContextFreeGrammar
   attr_accessor :non_terminals, :terminals, :start_sym, :rules
 
