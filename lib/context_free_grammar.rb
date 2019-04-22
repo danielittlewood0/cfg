@@ -40,6 +40,6 @@ class ContextFreeGrammar
   end
 
   def parse(str)
-    string_to_pseudo(str).parse(rules)
+    string_to_pseudo(str).parse(start_sym,rules)
   end
 end

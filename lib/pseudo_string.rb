@@ -84,16 +84,26 @@ class PseudoString
     rules.map{|rule| scan(rule.rs).map{|i| move(rule,i)}}.flatten
   end
 
-  def parse(rules,derivation=[self],moves=[])
+  def parse_step(rules,derivation=[self],moves=[])
     moves << possible_undos(rules)
     if moves[-1].empty?
       moves.pop
       derivation.pop
     else
       try = moves[-1].pop
-      try.parse(rules,derivation,moves)
+      try.parse_step(rules,derivation,moves)
       derivation << try
     end
     derivation
+  end
+
+  def parse(start_sym,rules)
+    derivation = parse_step(rules,[self],[])
+    p derivation
+    if derivation[0] == ps([start_sym])
+      return derivation
+    else
+      raise "word #{self} not in the language!"
+    end
   end
 end

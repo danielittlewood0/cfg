@@ -126,7 +126,7 @@ describe PseudoString do
     context '' do
 
       it '#parses' do
-         step_1 = given.parse(rules)
+        step_1 = given.parse("S".nt,rules)
          expect(step_1.map{|w| w.write}).to eq [
            "S",
            "SS",
@@ -179,11 +179,23 @@ describe PseudoString do
     it 'fail case if doesnt start with start symbol' do
       r_0 = rule("X".to_pseudo,"aXb".to_pseudo)
       r_1 = rule("X".to_pseudo,"ab".to_pseudo)
-      start = "X".to_pseudo
       rules = [r_0,r_1]
       given = "abb".to_pseudo
-      steps = given.parse(rules)
-      expect(steps).to eq ["Xb".to_pseudo]
+      expect{ given.parse("X".nt,rules) }.to raise_error "word abb not in the language!"
+      # replace this by a custom error class!
+    end
+
+    it 'performs incorrectly on palindroms' do
+      start_sym = "X".nt
+      r_0 = rule("X".to_pseudo,"aXa".to_pseudo)
+      r_1 = rule("X".to_pseudo,"a".to_pseudo)
+      r_2 = rule("X".to_pseudo,"b".to_pseudo)
+      rules = [r_0,r_1,r_2]
+      given = "aba".to_pseudo
+      puts given.parse(start_sym,rules)
+
     end
   end
+
+
 end

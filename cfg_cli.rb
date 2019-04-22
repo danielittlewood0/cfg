@@ -20,7 +20,7 @@ begin
 rescue => e
   puts "ERROR!"
   puts e.message
-  raise e
+# raise e
 end
 
 loop do
