@@ -122,37 +122,37 @@ describe PseudoString do
     r_4 = rule("X".to_pseudo,"b".to_pseudo)
     start = "S".to_pseudo
     rules = [r_0,r_1,r_2,r_3,r_4]
-#   given = "aaabaabaaa".to_pseudo
-    given = "aababa".to_pseudo
+    given = "aaabaabaaa".to_pseudo
     context '' do
 
       it '#parses' do
         step_1 = given.parse("S".nt,rules)
-         expect(step_1.map{|w| w.write}).to eq [
-           "S",
-           "SS",
-           "SSS",
-           "SSSS",
-           "SSSSS",
-           "SSSSSS",
-           "YSSSSS",
-           "YYSSSS",
-           "YYYSSS",
-           "YYYYSS",
-           "YYYYYS",
-           "YYYYYY",
-           "YYYXYYYY",
-           "YYYXYYXYYY",
-           "aYYXYYXYYY",
-           "aaYXYYXYYY",
-           "aaaXYYXYYY",
-           "aaaXaYXYYY",
-           "aaaXaaXYYY",
-           "aaaXaaXaYY",
-           "aaaXaaXaaY",
-           "aaaXaaXaaa",
-           "aaabaaXaaa"
-         ]
+        expect(step_1.map{|w| w.write}).to eq [
+          "S",
+          "SS",
+          "SSS",
+          "SYS",
+          "SYXYS",
+          "SYbYS",
+          "SSYbYS",
+          "SYYbYS",
+          "SYXYYbYS",
+          "SYbYYbYS",
+          "SYbYYbYSS",
+          "SYbYYbYSY",
+          "SYbYYbYSa",
+          "SYbYYbYYa",
+          "SYbYYbYaa",
+          "SYbYYbaaa",
+          "SYbYabaaa",
+          "SYbaabaaa",
+          "Sabaabaaa",
+          "SSabaabaaa",
+          "SYabaabaaa",
+          "Saabaabaaa",
+          "Yaabaabaaa",
+          "aaabaabaaa"
+        ]
       end
     end
   end

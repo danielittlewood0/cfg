@@ -84,53 +84,21 @@ class PseudoString
     rules.map{|rule| scan(rule.rs).map{|i| move(rule,i)}}.flatten
   end
 
-  def parse(start_sym,rules,derivation=[])
-    # Given a word, construct all possible pre-parses of that word.  
-    # Try each of them (of course, keeping them in state so you don't loop).
-    # If you ever run out of moves to try, undo your most recent move. 
-    # To parse a word, construct all possible pre-words. 
-    # Try to parse each of the words. 
-    # If any of them succeeds, append self to that derivation and report a success. 
-    # If they all fail, report a failure.
-
-#   p self.write
+  def parse(start_sym,rules,derivation=[],seen_before=[])
+    return nil if seen_before.include?(self)
+    seen_before << self
     possible_undos = possible_undos(rules)
     if self == ps([start_sym])
-#     p "victory!"
       return [ps([start_sym])] + derivation.reverse
     elsif possible_undos.empty?
-#     p "time to go up..."
       return nil
     else
       try = []
-      possible_undos.each do |preword|
-        try = preword.parse(start_sym,rules,derivation + [self])
+      possible_undos.select{|w| !seen_before.include?(w)}.each_with_index do |preword,i|
+        try = preword.parse(start_sym,rules,derivation + [self],seen_before)
         return try unless try.nil?
       end
       return nil
     end
   end
-
-# def parse_step(rules,derivation=[self],moves=[])
-#   moves << possible_undos(rules)
-#   if moves[-1].empty?
-#     moves.pop
-#     derivation.pop
-#   else
-#     try = moves[-1].pop
-#     try.parse_step(rules,derivation,moves)
-#     derivation << try
-#   end
-#   derivation
-# end
-
-# def parse(start_sym,rules)
-#   derivation = parse_step(rules,[self],[])
-#   p derivation
-#   if derivation[0] == ps([start_sym])
-#     return derivation
-#   else
-#     raise "word #{self} not in the language!"
-#   end
-# end
 end
