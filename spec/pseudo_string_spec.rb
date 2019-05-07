@@ -123,7 +123,7 @@ describe PseudoString do
     start = "S".to_pseudo
     rules = [r_0,r_1,r_2,r_3,r_4]
 #   given = "aaabaabaaa".to_pseudo
-    given = "aaabaabaaa".to_pseudo
+    given = "aababa".to_pseudo
     context '' do
 
       it '#parses' do
@@ -177,13 +177,12 @@ describe PseudoString do
   end
 
   describe '#parse' do
-    it 'fail case if doesnt start with start symbol' do
+    it 'returns nil if no parse exists' do
       r_0 = rule("X".to_pseudo,"aXb".to_pseudo)
       r_1 = rule("X".to_pseudo,"ab".to_pseudo)
       rules = [r_0,r_1]
       given = "abb".to_pseudo
-      expect{ given.parse("X".nt,rules) }.to raise_error "word abb not in the language!"
-      # replace this by a custom error class!
+      expect( given.parse("X".nt,rules) ).to eq nil
     end
 
     it 'performs incorrectly on palindromes' do

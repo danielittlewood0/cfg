@@ -84,7 +84,7 @@ class PseudoString
     rules.map{|rule| scan(rule.rs).map{|i| move(rule,i)}}.flatten
   end
 
-  def parse(start_sym,rules,derivation=[self])
+  def parse(start_sym,rules,derivation=[])
     # Given a word, construct all possible pre-parses of that word.  
     # Try each of them (of course, keeping them in state so you don't loop).
     # If you ever run out of moves to try, undo your most recent move. 
@@ -92,13 +92,14 @@ class PseudoString
     # Try to parse each of the words. 
     # If any of them succeeds, append self to that derivation and report a success. 
     # If they all fail, report a failure.
-    p self.write
+
+#   p self.write
     possible_undos = possible_undos(rules)
     if self == ps([start_sym])
-      p "victory!"
-      return derivation
+#     p "victory!"
+      return [ps([start_sym])] + derivation.reverse
     elsif possible_undos.empty?
-      p "time to go up..."
+#     p "time to go up..."
       return nil
     else
       try = []
