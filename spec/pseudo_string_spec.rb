@@ -123,35 +123,36 @@ describe PseudoString do
     start = "S".to_pseudo
     rules = [r_0,r_1,r_2,r_3,r_4]
     given = "aaabaabaaa".to_pseudo
-    context '' do
 
+    context 'Really slow on some examples' do
       it '#parses' do
         step_1 = given.parse("S".nt,rules)
-         expect(step_1.map{|w| w.write}).to eq [
-           "S",
-           "SS",
-           "SSS",
-           "SSSS",
-           "SSSSS",
-           "SSSSSS",
-           "YSSSSS",
-           "YYSSSS",
-           "YYYSSS",
-           "YYYYSS",
-           "YYYYYS",
-           "YYYYYY",
-           "YYYXYYYY",
-           "YYYXYYXYYY",
-           "aYYXYYXYYY",
-           "aaYXYYXYYY",
-           "aaaXYYXYYY",
-           "aaaXaYXYYY",
-           "aaaXaaXYYY",
-           "aaaXaaXaYY",
-           "aaaXaaXaaY",
-           "aaaXaaXaaa",
-           "aaabaaXaaa"
-         ]
+        expect(step_1.map{|w| w.write}).to eq [
+          "S",
+          "SS",
+          "SSS",
+          "SYS",
+          "SYXYS",
+          "SYbYS",
+          "SSYbYS",
+          "SYYbYS",
+          "SYXYYbYS",
+          "SYbYYbYS",
+          "SYbYYbYSS",
+          "SYbYYbYSY",
+          "SYbYYbYSa",
+          "SYbYYbYYa",
+          "SYbYYbYaa",
+          "SYbYYbaaa",
+          "SYbYabaaa",
+          "SYbaabaaa",
+          "Sabaabaaa",
+          "SSabaabaaa",
+          "SYabaabaaa",
+          "Saabaabaaa",
+          "Yaabaabaaa",
+          "aaabaabaaa"
+        ]
       end
     end
   end
@@ -176,23 +177,27 @@ describe PseudoString do
   end
 
   describe '#parse' do
-    it 'fail case if doesnt start with start symbol' do
+    it 'returns nil if no parse exists' do
       r_0 = rule("X".to_pseudo,"aXb".to_pseudo)
       r_1 = rule("X".to_pseudo,"ab".to_pseudo)
       rules = [r_0,r_1]
       given = "abb".to_pseudo
-      expect{ given.parse("X".nt,rules) }.to raise_error "word abb not in the language!"
-      # replace this by a custom error class!
+      expect( given.parse("X".nt,rules) ).to eq nil
     end
 
-    it 'performs incorrectly on palindroms' do
+    it 'performs incorrectly on palindromes' do
       start_sym = "X".nt
       r_0 = rule("X".to_pseudo,"aXa".to_pseudo)
       r_1 = rule("X".to_pseudo,"a".to_pseudo)
       r_2 = rule("X".to_pseudo,"b".to_pseudo)
       rules = [r_0,r_1,r_2]
       given = "aba".to_pseudo
-      puts given.parse(start_sym,rules)
+      expect(given.parse(start_sym,rules).map(&:write)).to eq [
+        'X',
+        'aXa',
+        'aba'
+      ]
+
 
     end
   end
