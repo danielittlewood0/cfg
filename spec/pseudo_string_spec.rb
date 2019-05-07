@@ -123,8 +123,8 @@ describe PseudoString do
     start = "S".to_pseudo
     rules = [r_0,r_1,r_2,r_3,r_4]
     given = "aaabaabaaa".to_pseudo
-    context '' do
 
+    context 'Really slow on some examples' do
       it '#parses' do
         step_1 = given.parse("S".nt,rules)
         expect(step_1.map{|w| w.write}).to eq [
@@ -192,7 +192,12 @@ describe PseudoString do
       r_2 = rule("X".to_pseudo,"b".to_pseudo)
       rules = [r_0,r_1,r_2]
       given = "aba".to_pseudo
-      puts given.parse(start_sym,rules)
+      expect(given.parse(start_sym,rules).map(&:write)).to eq [
+        'X',
+        'aXa',
+        'aba'
+      ]
+
 
     end
   end
