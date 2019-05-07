@@ -122,6 +122,7 @@ describe PseudoString do
     r_4 = rule("X".to_pseudo,"b".to_pseudo)
     start = "S".to_pseudo
     rules = [r_0,r_1,r_2,r_3,r_4]
+#   given = "aaabaabaaa".to_pseudo
     given = "aaabaabaaa".to_pseudo
     context '' do
 
@@ -185,7 +186,7 @@ describe PseudoString do
       # replace this by a custom error class!
     end
 
-    it 'performs incorrectly on palindroms' do
+    it 'performs incorrectly on palindromes' do
       start_sym = "X".nt
       r_0 = rule("X".to_pseudo,"aXa".to_pseudo)
       r_1 = rule("X".to_pseudo,"a".to_pseudo)

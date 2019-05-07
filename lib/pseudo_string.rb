@@ -84,26 +84,52 @@ class PseudoString
     rules.map{|rule| scan(rule.rs).map{|i| move(rule,i)}}.flatten
   end
 
-  def parse_step(rules,derivation=[self],moves=[])
-    moves << possible_undos(rules)
-    if moves[-1].empty?
-      moves.pop
-      derivation.pop
+  def parse(start_sym,rules,derivation=[self])
+    # Given a word, construct all possible pre-parses of that word.  
+    # Try each of them (of course, keeping them in state so you don't loop).
+    # If you ever run out of moves to try, undo your most recent move. 
+    # To parse a word, construct all possible pre-words. 
+    # Try to parse each of the words. 
+    # If any of them succeeds, append self to that derivation and report a success. 
+    # If they all fail, report a failure.
+    p self.write
+    possible_undos = possible_undos(rules)
+    if self == ps([start_sym])
+      p "victory!"
+      return derivation
+    elsif possible_undos.empty?
+      p "time to go up..."
+      return nil
     else
-      try = moves[-1].pop
-      try.parse_step(rules,derivation,moves)
-      derivation << try
+      try = []
+      possible_undos.each do |preword|
+        try = preword.parse(start_sym,rules,derivation + [self])
+        return try unless try.nil?
+      end
+      return nil
     end
-    derivation
   end
 
-  def parse(start_sym,rules)
-    derivation = parse_step(rules,[self],[])
-    p derivation
-    if derivation[0] == ps([start_sym])
-      return derivation
-    else
-      raise "word #{self} not in the language!"
-    end
-  end
+# def parse_step(rules,derivation=[self],moves=[])
+#   moves << possible_undos(rules)
+#   if moves[-1].empty?
+#     moves.pop
+#     derivation.pop
+#   else
+#     try = moves[-1].pop
+#     try.parse_step(rules,derivation,moves)
+#     derivation << try
+#   end
+#   derivation
+# end
+
+# def parse(start_sym,rules)
+#   derivation = parse_step(rules,[self],[])
+#   p derivation
+#   if derivation[0] == ps([start_sym])
+#     return derivation
+#   else
+#     raise "word #{self} not in the language!"
+#   end
+# end
 end
