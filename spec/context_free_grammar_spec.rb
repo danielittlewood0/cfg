@@ -103,4 +103,25 @@ describe ContextFreeGrammar do
       expect(default_terminals.map(&:to_s)).to include(*'()[]{}'.split(''))
     end
   end
+
+  context "docs" do
+    it "consists of non_terminals, terminals and rules" do
+      x = NonTerminal.with_char("x")
+      y = NonTerminal.with_char("y")
+      a = Terminal.with_char("a")
+      b = Terminal.with_char("b")
+      r_1 = ProductionRule.new(ls: x, rs: PseudoString.new([x,y]))
+      r_2 = ProductionRule.new(ls: x, rs: PseudoString.new([x,y]))
+
+      cfg = ContextFreeGrammar.new(
+        terminals: [a,b],
+        non_terminals: [x,y],
+        rules: [r_1,r_2]
+      )
+
+      expect(cfg.non_terminals).to eq [x,y]
+      expect(cfg.terminals).to eq [a,b]
+      expect(cfg.rules).to eq [r_1,r_2]
+    end
+  end
 end

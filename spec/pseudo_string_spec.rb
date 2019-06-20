@@ -105,15 +105,9 @@ describe PseudoString do
   end
 
   describe '#scan,#possible_undos' do
-<<<<<<< HEAD
     word = PseudoString.from_string_default("aaaababababaababababaaababa")
-    ls = PseudoString.from_string_default("X")
-    rs = PseudoString.from_string_default("aa")
-=======
-    word = "aaaababababaababababaaababa".to_pseudo
     ls = NonTerminal.with_char("X")
-    rs = "aa".to_pseudo
->>>>>>> rule#new now takes kwargs, and ls is a non_terminal (not a pseudo_string)
+    rs = PseudoString.from_string_default("aa")
     rule = rule(ls,rs)
     it 'finds all the indices a subword begins at' do
       indices = word.scan(PseudoString.from_string_default("aa"))
@@ -139,21 +133,12 @@ describe PseudoString do
   end
 
   describe '#parse,#try_unapply,#unapply_failed' do
-<<<<<<< HEAD
-    r_0 = rule(PseudoString.from_string_default("S"),PseudoString.from_string_default("SS"))
-    r_1 = rule(PseudoString.from_string_default("S"),PseudoString.from_string_default("Y"))
-    r_2 = rule(PseudoString.from_string_default("Y"),PseudoString.from_string_default("YXY"))
-    r_3 = rule(PseudoString.from_string_default("Y"),PseudoString.from_string_default("a"))
-    r_4 = rule(PseudoString.from_string_default("X"),PseudoString.from_string_default("b"))
+    r_0 = rule(NonTerminal.with_char("S"), PseudoString.from_string_default("SS"))
+    r_1 = rule(NonTerminal.with_char("S"), PseudoString.from_string_default("Y"))
+    r_2 = rule(NonTerminal.with_char("Y"), PseudoString.from_string_default("YXY"))
+    r_3 = rule(NonTerminal.with_char("Y"), PseudoString.from_string_default("a"))
+    r_4 = rule(NonTerminal.with_char("X"), PseudoString.from_string_default("b"))
     start = PseudoString.from_string_default("S")
-=======
-    r_0 = rule(NonTerminal.with_char("S"), "SS".to_pseudo)
-    r_1 = rule(NonTerminal.with_char("S"), "Y".to_pseudo)
-    r_2 = rule(NonTerminal.with_char("Y"), "YXY".to_pseudo)
-    r_3 = rule(NonTerminal.with_char("Y"), "a".to_pseudo)
-    r_4 = rule(NonTerminal.with_char("X"), "b".to_pseudo)
-    start = "S".to_pseudo
->>>>>>> rule#new now takes kwargs, and ls is a non_terminal (not a pseudo_string)
     rules = [r_0,r_1,r_2,r_3,r_4]
     given = PseudoString.from_string_default("aaabaabaaa")
 
@@ -228,10 +213,6 @@ describe PseudoString do
         'aXa',
         'aba'
       ]
-
-
     end
   end
-
-
 end

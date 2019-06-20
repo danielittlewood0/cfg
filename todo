@@ -1,0 +1,11 @@
+Documentation-style specs go at the top. 
+To support documentation specs, use example CFGs in documentation. 
+Move #parse out into CFG. 
+Change #write to #to_s; think about how to implement String API. 
+Remove short factories. More verbose, clearer method names. 
+Add examples of popular CFGs, including HTML, JSON, and arithmetic. 
+Investigate performance and correctness of #parse. 
+Document the implementation & correspondence to the mathematical model. 
+Rules given in Backus-Naur form. 
+Support for empty-productions.
+Encapsulate as a gem. 

@@ -13,11 +13,10 @@ def rule(ls,rs)
   ProductionRule.new(ls: ls,rs: rs) 
 end
 
-
 def ps(chars)
   PseudoString.new(chars) 
 end
 
 def move(rule,index)
-  Move.new(rule,index)
+  Move.new(rule: rule,index: index)
 end
