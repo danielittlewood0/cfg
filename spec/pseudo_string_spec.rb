@@ -10,9 +10,9 @@ describe PseudoString do
 
   describe '#==' do
     it 'two strings are the same iff they have the same chars' do
-      hello_1 = ps("hello".split('').map{|c| c.t})
-      hello_2 = ps("hello".split('').map{|c| c.t})
-      hello_3 = ps("hello".split('').map{|c| c.nt})
+      hello_1 = ps("hello".split('').map{|c| Terminal.with_char(c)})
+      hello_2 = ps("hello".split('').map{|c| Terminal.with_char(c)})
+      hello_3 = ps("hello".split('').map{|c| NonTerminal.with_char(c)})
       
       expect(hello_1 == hello_2).to eq true 
       expect(hello_2 == hello_3).to eq false
@@ -35,8 +35,8 @@ describe PseudoString do
 
   describe '#apply_rule' do
     it 'replaces the leftmost instance of ls with rs' do
-      x = 'X'.nt
-      a = 'a'.t
+      x = NonTerminal.with_char('X')
+      a = Terminal.with_char('a')
       ls = ps([x])
       rs = ps([a,a])
       rul = rule(ls,rs) 
@@ -177,9 +177,9 @@ describe PseudoString do
 
   describe 'apply' do
     it '' do
-      x = 'X'.nt
-      y = 'Y'.nt
-      a = 'a'.t
+      x = NonTerminal.with_char('X')
+      y = NonTerminal.with_char('Y')
+      a = Terminal.with_char('a')
       line_1 = PseudoString.from_string_default('X')
       line_2 = PseudoString.from_string_default('YY')
       line_3 = PseudoString.from_string_default('aY')
@@ -198,11 +198,11 @@ describe PseudoString do
       r_1 = rule(PseudoString.from_string_default("X"),PseudoString.from_string_default("ab"))
       rules = [r_0,r_1]
       given = PseudoString.from_string_default("abb")
-      expect( given.parse("X".nt,rules) ).to eq nil
+      expect( given.parse(NonTerminal.with_char("X"),rules) ).to eq nil
     end
 
     it 'performs incorrectly on palindromes' do
-      start_sym = "X".nt
+      start_sym = NonTerminal.with_char("X")
       r_0 = rule(PseudoString.from_string_default("X"),PseudoString.from_string_default("aXa"))
       r_1 = rule(PseudoString.from_string_default("X"),PseudoString.from_string_default("a"))
       r_2 = rule(PseudoString.from_string_default("X"),PseudoString.from_string_default("b"))

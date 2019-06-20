@@ -13,4 +13,7 @@ class PseudoChar
     char
   end
 
+  def self.with_char(char)
+    self.new(char)
+  end
 end

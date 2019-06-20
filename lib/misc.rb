@@ -6,14 +6,6 @@ require 'pseudo_string.rb'
 require 'context_free_grammar.rb'
 
 class String
-  def nt
-    NonTerminal.new(self)
-  end
-
-  def t
-    Terminal.new(self)
-  end
-
 end
 
 def rule(ls,rs) 

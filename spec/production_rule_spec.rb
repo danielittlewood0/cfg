@@ -2,8 +2,8 @@ require 'production_rule'
 describe ProductionRule do 
   describe '#rule,#ls,#rs' do
     it 'factory' do
-      x = 'X'.nt
-      a = 'a'.t
+      x = NonTerminal.with_char('X')
+      a = Terminal.with_char('a')
       ls = ps([x])
       rs = ps([a,a])
       rul = rule(ls,rs) 

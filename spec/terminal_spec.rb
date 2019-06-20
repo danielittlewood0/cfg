@@ -2,8 +2,8 @@ require 'terminal'
 describe Terminal do
   describe '==' do
     it 'two terminals are equal when they have the same character' do
-      x = 'X'.t
-      y = 'X'.t
+      x = Terminal.with_char('X')
+      y = Terminal.with_char('X')
       expect(x.char).to eq 'X'
       expect(y.char).to eq 'X'
       expect(x.class).to eq Terminal

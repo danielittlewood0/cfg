@@ -1,26 +1,18 @@
 require 'misc'
 describe String do 
-  describe '#nt' do
-    it 'factory' do
-      x = 'X'.nt
-      expect(x.class).to eq NonTerminal 
-      expect(x.char).to eq 'X' 
-    end
-  end
-
-  describe '#t' do
-    it 'factory' do
-      a = 'a'.t
-      expect(a.class).to eq Terminal 
-      expect(a.char).to eq 'a' 
-    end
-  end
-
-  describe '#to_psuedo' do
+  describe '#to_pseudo' do
     it 'Given list of terms and non terms, turns string into pseudo string' do
       str = PseudoString.from_string_default("XXaaXYb")
-      expect(str).to be_a PseudoString 
-      expect(str.chars).to eq ["X".nt, "X".nt, "a".t, "a".t, "X".nt, "Y".nt, "b".t]
+      expect(str.class).to eq PseudoString 
+      expect(str.chars).to eq [
+        NonTerminal.with_char("X"), 
+        NonTerminal.with_char("X"), 
+        Terminal.with_char("a"), 
+        Terminal.with_char("a"), 
+        NonTerminal.with_char("X"), 
+        NonTerminal.with_char("Y"), 
+        Terminal.with_char("b")
+      ]
     end
   end
 end
