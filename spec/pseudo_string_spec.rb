@@ -71,7 +71,7 @@ describe PseudoString do
   end
 
 
-  describe '#apply,#unapply_at,#unapply' do
+  describe '#apply,#unapply' do
     x = 'X'.nt
     a = 'a'.t
     ls = ps([x])
@@ -81,13 +81,30 @@ describe PseudoString do
     it '#apply replaces X by aa' do
       expect(applied.write).to eq "aa"
     end
-    unapplied_1 = applied.unapply_at(0,rul)
-    it '#unapply_at undoes this application (but needs index)' do
-      expect(unapplied_1).to eq ls
-    end
     unapplied_2 = applied.unapply(rul)
     it '#unapply undoes the leftmost instance' do
       expect(unapplied_2).to eq ls
+    end
+  end
+
+  describe "#unapply_at" do
+    x = 'X'.nt
+    a = 'a'.t
+    ls = ps([x])
+    rs = ps([a,a])
+    rul = rule(ls,rs) 
+    applied = ls.apply(rul)
+    it '#unapply_at undoes this application (but needs index)' do
+      unapplied_1 = applied.unapply_at(0,rul)
+      expect(unapplied_1).to eq ls
+    end
+    it "returns nil if given nil index" do
+      unapplied_2 = applied.unapply_at(nil,rul)
+      expect(unapplied_2).to eq nil
+    end
+    it "returns nil if match fails" do
+      unapplied_3 = applied.unapply_at(1,rul)
+      expect(unapplied_3).to eq nil
     end
   end
 
@@ -112,6 +129,11 @@ describe PseudoString do
                                                     "aaaababababaababababXababa",
                                                     "aaaababababaababababaXbaba"]
    end
+
+   it 'finds all possible words an application could have come from (leftmost)' do
+     possible_undos = word.leftmost_possible_undos([rule])
+     expect(possible_undos.map{|w| w.write}).to eq ["Xaababababaababababaaababa"]
+   end
   end
 
   describe '#parse,#try_unapply,#unapply_failed' do
@@ -124,35 +146,35 @@ describe PseudoString do
     rules = [r_0,r_1,r_2,r_3,r_4]
     given = "aaabaabaaa".to_pseudo
 
-    context 'Really slow on some examples' do
-      it '#parses' do
+    context "Example that used to have bad performance (solved)" do
+      it "leftmost parse" do
         step_1 = given.parse("S".nt,rules)
         expect(step_1.map{|w| w.write}).to eq [
-          "S",
-          "SS",
-          "SSS",
-          "SYS",
-          "SYXYS",
-          "SYbYS",
-          "SSYbYS",
-          "SYYbYS",
-          "SYXYYbYS",
-          "SYbYYbYS",
-          "SYbYYbYSS",
-          "SYbYYbYSY",
-          "SYbYYbYSa",
-          "SYbYYbYYa",
-          "SYbYYbYaa",
-          "SYbYYbaaa",
-          "SYbYabaaa",
-          "SYbaabaaa",
-          "Sabaabaaa",
-          "SSabaabaaa",
-          "SYabaabaaa",
-          "Saabaabaaa",
-          "Yaabaabaaa",
-          "aaabaabaaa"
-        ]
+            "S",
+            "SS",
+            "SY",
+            "SSY",
+            "SYY",
+            "SSYY",
+            "SYYY",
+            "SYXYYY",
+            "SYbYYY",
+            "SSYbYYY",
+            "SYYbYYY",
+            "SYXYYbYYY",
+            "SYbYYbYYY",
+            "SYbYYbYYa",
+            "SYbYYbYaa",
+            "SYbYYbaaa",
+            "SYbYabaaa",
+            "SYbaabaaa",
+            "Sabaabaaa",
+            "SSabaabaaa",
+            "SYabaabaaa",
+            "Saabaabaaa",
+            "Yaabaabaaa",
+            "aaabaabaaa"
+          ]
       end
     end
   end
