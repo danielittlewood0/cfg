@@ -9,7 +9,8 @@ class String
 end
 
 def rule(ls,rs) 
-  ProductionRule.new(ls,rs) 
+  raise "LHS should be a NonTerminal!" if !ls.is_a?(NonTerminal)
+  ProductionRule.new(ls: ls,rs: rs) 
 end
 
 
