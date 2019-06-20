@@ -1,6 +1,6 @@
 require 'pseudo_string'
 describe PseudoString do
-  describe '#write' do
+  describe '#to_s' do
     it 'turns a pseudo-string into a string' do
       pseudo_string = PseudoString.from_string_default("hello")
       string = pseudo_string.write
@@ -40,7 +40,7 @@ describe PseudoString do
       ls = ps([x])
       rs = ps([a,a])
       rul = rule(ls,rs) 
-      expect(ls.apply(rul).write).to eq "aa"
+      expect(ls.apply(rul).to_s).to eq "aa"
     end
   end
 
@@ -75,7 +75,7 @@ describe PseudoString do
     rul = rule(ls,rs) 
     applied = ls.apply(rul)
     it '#apply replaces X by aa' do
-      expect(applied.write).to eq "aa"
+      expect(applied.to_s).to eq "aa"
     end
     unapplied_2 = applied.unapply(rul)
     it '#unapply undoes the leftmost instance' do
@@ -114,11 +114,11 @@ describe PseudoString do
       expect(indices).to eq [0,1,2,11,20,21]
     end
     it 'fixed bug in #unapply' do
-      expect(word.unapply_at(1,rule).write).to eq "aXababababaababababaaababa"
+      expect(word.unapply_at(1,rule).to_s).to eq "aXababababaababababaaababa"
     end
    it 'finds all possible words an application could have come from' do
      possible_undos = word.possible_undos([rule])
-     expect(possible_undos.map{|w| w.write}).to eq ["Xaababababaababababaaababa",
+     expect(possible_undos.map{|w| w.to_s}).to eq ["Xaababababaababababaaababa",
                                                     "aXababababaababababaaababa",
                                                     "aaXbabababaababababaaababa",
                                                     "aaaababababXbabababaaababa",

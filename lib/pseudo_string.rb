@@ -7,16 +7,12 @@ class PseudoString
   end
 
   def to_s
-    write
-  end
+    @chars.map{|c| c.char}.join('')
+  end  
 
   def self.from_string_default(string)
     ContextFreeGrammar.default.string_to_pseudo(string)
   end
-
-  def write
-    @chars.map{|c| c.char}.join('')
-  end  
 
   def ==(other)
     self.chars == other.chars
@@ -63,7 +59,6 @@ class PseudoString
       return self[0...i] + rule.ls + self[after..-1]
     else
       return nil
-      raise "#{rs.write} is different from #{proposed_rs.write}"
     end
   end
 
