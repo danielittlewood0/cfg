@@ -15,7 +15,7 @@ class PseudoString
   end
 
   def ==(other)
-    self.chars == other.chars
+    (self.class == other.class) && (self.chars == other.chars)
   end
 
   def +(other)
@@ -46,7 +46,7 @@ class PseudoString
   end
 
   def apply(rule)
-    i = self.chars.index(rule.ls.chars.first)
+    i = self.chars.index(rule.ls)
     apply_at(i,rule)
   end
 
@@ -56,7 +56,7 @@ class PseudoString
     proposed_rs = self[i...i + rs.length]
     if rs == proposed_rs
       after = i + rs.length
-      return self[0...i] + rule.ls + self[after..-1]
+      return self[0...i] + rule.ls_as_pseudo_string + self[after..-1]
     else
       return nil
     end
