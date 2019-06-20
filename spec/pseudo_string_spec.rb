@@ -68,9 +68,9 @@ describe PseudoString do
 
 
   describe '#apply,#unapply' do
-    x = 'X'.nt
-    a = 'a'.t
-    ls = ps([x])
+    x = NonTerminal.with_char('X')
+    a = Terminal.with_char('a')
+    ls = x
     rs = ps([a,a])
     rul = rule(ls,rs) 
     applied = ps([ls]).apply(rul)
@@ -84,15 +84,15 @@ describe PseudoString do
   end
 
   describe "#unapply_at" do
-    x = 'X'.nt
-    a = 'a'.t
-    ls = ps([x])
+    x = NonTerminal.with_char('X')
+    a = Terminal.with_char('a')
+    ls = x
     rs = ps([a,a])
     rul = rule(ls,rs) 
-    applied = ls.apply(rul)
+    applied = ps([ls]).apply(rul)
     it '#unapply_at undoes this application (but needs index)' do
       unapplied_1 = applied.unapply_at(0,rul)
-      expect(unapplied_1).to eq ls
+      expect(unapplied_1).to eq ps([ls])
     end
     it "returns nil if given nil index" do
       unapplied_2 = applied.unapply_at(nil,rul)
@@ -128,7 +128,7 @@ describe PseudoString do
 
    it 'finds all possible words an application could have come from (leftmost)' do
      possible_undos = word.leftmost_possible_undos([rule])
-     expect(possible_undos.map{|w| w.write}).to eq ["Xaababababaababababaaababa"]
+     expect(possible_undos.map{|w| w.to_s}).to eq ["Xaababababaababababaaababa"]
    end
   end
 
@@ -144,8 +144,8 @@ describe PseudoString do
 
     context "Example that used to have bad performance (solved)" do
       it "leftmost parse" do
-        step_1 = given.parse("S".nt,rules)
-        expect(step_1.map{|w| w.write}).to eq [
+        step_1 = given.parse(NonTerminal.with_char("S"),rules)
+        expect(step_1.map{|w| w.to_s}).to eq [
             "S",
             "SS",
             "SY",
