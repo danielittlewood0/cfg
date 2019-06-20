@@ -71,7 +71,7 @@ describe PseudoString do
   end
 
 
-  describe '#apply,#unapply_at,#unapply' do
+  describe '#apply,#unapply' do
     x = 'X'.nt
     a = 'a'.t
     ls = ps([x])
@@ -81,13 +81,30 @@ describe PseudoString do
     it '#apply replaces X by aa' do
       expect(applied.write).to eq "aa"
     end
-    unapplied_1 = applied.unapply_at(0,rul)
-    it '#unapply_at undoes this application (but needs index)' do
-      expect(unapplied_1).to eq ls
-    end
     unapplied_2 = applied.unapply(rul)
     it '#unapply undoes the leftmost instance' do
       expect(unapplied_2).to eq ls
+    end
+  end
+
+  describe "#unapply_at" do
+    x = 'X'.nt
+    a = 'a'.t
+    ls = ps([x])
+    rs = ps([a,a])
+    rul = rule(ls,rs) 
+    applied = ls.apply(rul)
+    it '#unapply_at undoes this application (but needs index)' do
+      unapplied_1 = applied.unapply_at(0,rul)
+      expect(unapplied_1).to eq ls
+    end
+    it "returns nil if given nil index" do
+      unapplied_2 = applied.unapply_at(nil,rul)
+      expect(unapplied_2).to eq nil
+    end
+    it "returns nil if match fails" do
+      unapplied_3 = applied.unapply_at(1,rul)
+      expect(unapplied_3).to eq nil
     end
   end
 

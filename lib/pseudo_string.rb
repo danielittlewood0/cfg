@@ -52,11 +52,13 @@ class PseudoString
 
   def unapply_at(i,rule)
     rs = rule.rs
+    return nil if i.nil?
     proposed_rs = self[i...i + rs.length]
     if rs == proposed_rs
       after = i + rs.length
       return self[0...i] + rule.ls + self[after..-1]
     else
+      return nil
       raise "#{rs.write} is different from #{proposed_rs.write}"
     end
   end
