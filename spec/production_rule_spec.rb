@@ -5,12 +5,12 @@ describe ProductionRule do
       x = NonTerminal.with_char('X')
       a = Terminal.with_char('a')
       rs = PseudoString.new([a,a])
-      ProductionRule.new(ls: x,rs: rs) 
-      expect(rul.class).to eq ProductionRule 
-      expect(rul.ls).to eq x
-      expect(rul.ls).to be_a NonTerminal
-      expect(rul.rs).to eq rs
-      expect(rul.rs).to be_a PseudoString
+      rule = ProductionRule.new(ls: x,rs: rs) 
+      expect(rule.class).to eq ProductionRule 
+      expect(rule.ls).to eq x
+      expect(rule.ls).to be_a NonTerminal
+      expect(rule.rs).to eq rs
+      expect(rule.rs).to be_a PseudoString
     end
   end
 
@@ -20,10 +20,10 @@ describe ProductionRule do
       a = Terminal.with_char('a')
       ls = PseudoString.new([x])
       rs = PseudoString.new([a,a])
-      rul = ProductionRule.new(ls: ls, rs: rs)
-      expect(rul.class).to eq ProductionRule 
-      expect(rul.ls).to eq ls
-      expect(rul.rs).to eq rs
+      rule = ProductionRule.new(ls: ls, rs: rs)
+      expect(rule.class).to eq ProductionRule 
+      expect(rule.ls).to eq ls
+      expect(rule.rs).to eq rs
     end
   end
 

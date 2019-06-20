@@ -2,7 +2,7 @@ require 'move'
 describe Move do 
   context "docs" do
     it "represents a move being applied at some index; #initialize" do
-      ls = PseudoString.from_string_default("X")
+      ls = NonTerminal.with_char("X")
       rs = PseudoString.from_string_default("aa")
       rule = ProductionRule.new(ls: ls,rs: rs)
       move = Move.new(rule: rule, index: 1)
@@ -14,13 +14,13 @@ describe Move do
 
     it "can be 'applied' to a pseudo_string; implemented there for chaining" do
       receiver = PseudoString.from_string_default("X")
-      ls = PseudoString.from_string_default("X")
+      ls = NonTerminal.with_char("X")
       rs = PseudoString.from_string_default("Xa")
       rule = ProductionRule.new(ls: ls,rs: rs)
       move = Move.new(rule: rule, index: 1)
 
       result = receiver.apply(rule).apply(rule).apply(rule)
-      expect(result.to_s).to eq "XXXa"
+      expect(result.to_s).to eq "Xaaa"
     end
   end
 end

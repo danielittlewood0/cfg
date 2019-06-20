@@ -4,10 +4,10 @@ require 'misc.rb'
 class ContextFreeGrammar
   attr_accessor :non_terminals, :terminals, :start_sym, :rules
 
-  def initialize
-    @non_terminals = []
-    @terminals = []
-    @rules = []
+  def initialize(non_terminals:[], terminals:[], rules:[])
+    @non_terminals = non_terminals
+    @terminals = terminals
+    @rules = rules
   end
 
   def alphabet
