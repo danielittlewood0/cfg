@@ -129,6 +129,11 @@ describe PseudoString do
                                                     "aaaababababaababababXababa",
                                                     "aaaababababaababababaXbaba"]
    end
+
+   it 'finds all possible words an application could have come from (leftmost)' do
+     possible_undos = word.leftmost_possible_undos([rule])
+     expect(possible_undos.map{|w| w.write}).to eq ["Xaababababaababababaaababa"]
+   end
   end
 
   describe '#parse,#try_unapply,#unapply_failed' do
@@ -141,35 +146,35 @@ describe PseudoString do
     rules = [r_0,r_1,r_2,r_3,r_4]
     given = "aaabaabaaa".to_pseudo
 
-    context 'Really slow on some examples' do
-      it '#parses' do
+    context "Example that used to have bad performance (solved)" do
+      it "leftmost parse" do
         step_1 = given.parse("S".nt,rules)
         expect(step_1.map{|w| w.write}).to eq [
-          "S",
-          "SS",
-          "SSS",
-          "SYS",
-          "SYXYS",
-          "SYbYS",
-          "SSYbYS",
-          "SYYbYS",
-          "SYXYYbYS",
-          "SYbYYbYS",
-          "SYbYYbYSS",
-          "SYbYYbYSY",
-          "SYbYYbYSa",
-          "SYbYYbYYa",
-          "SYbYYbYaa",
-          "SYbYYbaaa",
-          "SYbYabaaa",
-          "SYbaabaaa",
-          "Sabaabaaa",
-          "SSabaabaaa",
-          "SYabaabaaa",
-          "Saabaabaaa",
-          "Yaabaabaaa",
-          "aaabaabaaa"
-        ]
+            "S",
+            "SS",
+            "SY",
+            "SSY",
+            "SYY",
+            "SSYY",
+            "SYYY",
+            "SYXYYY",
+            "SYbYYY",
+            "SSYbYYY",
+            "SYYbYYY",
+            "SYXYYbYYY",
+            "SYbYYbYYY",
+            "SYbYYbYYa",
+            "SYbYYbYaa",
+            "SYbYYbaaa",
+            "SYbYabaaa",
+            "SYbaabaaa",
+            "Sabaabaaa",
+            "SSabaabaaa",
+            "SYabaabaaa",
+            "Saabaabaaa",
+            "Yaabaabaaa",
+            "aaabaabaaa"
+          ]
       end
     end
   end

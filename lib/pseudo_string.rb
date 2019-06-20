@@ -82,6 +82,10 @@ class PseudoString
               map{|i| unapply_at(i,rule)}}.flatten
   end
 
+  def leftmost_possible_undos(rules)
+    rules.map{|rule| unapply(rule)}.compact
+  end
+
   def possible_last_moves(rules)
     rules.map{|rule| scan(rule.rs).map{|i| move(rule,i)}}.flatten
   end
@@ -89,7 +93,8 @@ class PseudoString
   def parse(start_sym,rules,derivation=[],seen_before=[])
     return nil if seen_before.include?(self)
     seen_before << self
-    possible_undos = possible_undos(rules)
+
+    possible_undos = leftmost_possible_undos(rules)
     if self == ps([start_sym])
       return [ps([start_sym])] + derivation.reverse
     elsif possible_undos.empty?
