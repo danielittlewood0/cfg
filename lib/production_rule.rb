@@ -1,7 +1,10 @@
+require 'terminal'
+require 'non_terminal'
+require 'pseudo_string'
 class ProductionRule 
   attr_accessor :ls,:rs 
 
-  def initialize(ls,rs)
+  def initialize(ls:, rs:)
     @ls = ls
     @rs = rs 
   end

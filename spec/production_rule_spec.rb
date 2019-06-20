@@ -4,9 +4,9 @@ describe ProductionRule do
     it 'factory' do
       x = NonTerminal.with_char('X')
       a = Terminal.with_char('a')
-      ls = ps([x])
-      rs = ps([a,a])
-      rul = rule(ls,rs) 
+      ls = PseudoString.new([x])
+      rs = PseudoString.new([a,a])
+      rul = ProductionRule.new(ls: ls, rs: rs)
       expect(rul.class).to eq ProductionRule 
       expect(rul.ls).to eq ls
       expect(rul.rs).to eq rs
