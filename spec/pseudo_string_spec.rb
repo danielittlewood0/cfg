@@ -66,24 +66,53 @@ describe PseudoString do
     end
   end
 
-
-  describe '#apply,#unapply' do
-    x = NonTerminal.with_char('X')
-    a = Terminal.with_char('a')
-    ls = x
-    rs = ps([a,a])
-    rul = rule(ls,rs) 
-    applied = ps([ls]).apply(rul)
-    it '#apply replaces X by aa' do
+  describe '#apply, #apply_at' do
+    it "apply replaces leftmost X by aa" do
+      x = NonTerminal.with_char('X')
+      a = Terminal.with_char('a')
+      ls = x
+      rs = ps([a,a])
+      rul = rule(ls,rs) 
+      applied = ps([ls]).apply(rul)
       expect(applied.to_s).to eq "aa"
     end
-    unapplied_2 = applied.unapply(rul)
-    it '#unapply undoes the leftmost instance' do
-      expect(unapplied_2).to eq ps([ls])
+
+    it "apply_at replaces at a given point" do
+      x = NonTerminal.with_char('X')
+      y = NonTerminal.with_char('Y')
+      a = Terminal.with_char('a')
+      non_terms = ['X','Y']
+      terms = ['a']
+      line_1 = 'X'.to_pseudo(non_terms,terms)
+      line_2 = 'YY'.to_pseudo(non_terms,terms)
+      line_3 = 'aY'.to_pseudo(non_terms,terms)
+      line_4 = 'Ya'.to_pseudo(non_terms,terms)
+
+      r_1 = rule(x,line_2)
+      r_2 = rule(y,ps([a]))
+      expect(line_1.apply(r_1)).to eq line_2
+      expect(line_2.apply(r_2)).to eq line_3
+      expect(line_2.apply(r_1)).to eq line_2
+      expect(line_2.apply_at(1,r_2)).to eq line_4
+    end
+
+    it "apply_at returns self if no application" do
+      x = NonTerminal.with_char('X')
+      y = NonTerminal.with_char('Y')
+      a = Terminal.with_char('a')
+      non_terms = ['X','Y']
+      terms = ['a']
+      line_1 = ps([x])
+      line_2 = ps([y,y])
+
+      r_1 = rule(x,line_2)
+      r_2 = rule(y,ps([a]))
+      expect(line_1.apply(r_2)).to eq line_1
+      expect(line_1.apply_at(1,r_2)).to eq line_1
     end
   end
 
-  describe "#unapply_at" do
+  describe "#unapply, #unapply_at" do
     x = NonTerminal.with_char('X')
     a = Terminal.with_char('a')
     ls = x
@@ -101,6 +130,11 @@ describe PseudoString do
     it "returns nil if match fails" do
       unapplied_3 = applied.unapply_at(1,rul)
       expect(unapplied_3).to eq nil
+    end
+
+    it '#unapply undoes the leftmost instance' do
+      unapplied_4 = applied.unapply(rul)
+      expect(unapplied_4).to eq ps([ls])
     end
   end
 
@@ -130,89 +164,5 @@ describe PseudoString do
      possible_undos = word.leftmost_possible_undos([rule])
      expect(possible_undos.map{|w| w.to_s}).to eq ["Xaababababaababababaaababa"]
    end
-  end
-
-  describe '#parse,#try_unapply,#unapply_failed' do
-    r_0 = rule(NonTerminal.with_char("S"), PseudoString.from_string_default("SS"))
-    r_1 = rule(NonTerminal.with_char("S"), PseudoString.from_string_default("Y"))
-    r_2 = rule(NonTerminal.with_char("Y"), PseudoString.from_string_default("YXY"))
-    r_3 = rule(NonTerminal.with_char("Y"), PseudoString.from_string_default("a"))
-    r_4 = rule(NonTerminal.with_char("X"), PseudoString.from_string_default("b"))
-    start = PseudoString.from_string_default("S")
-    rules = [r_0,r_1,r_2,r_3,r_4]
-    given = PseudoString.from_string_default("aaabaabaaa")
-
-    context "Example that used to have bad performance (solved)" do
-      it "leftmost parse" do
-        step_1 = given.parse(NonTerminal.with_char("S"),rules)
-        expect(step_1.map{|w| w.to_s}).to eq [
-            "S",
-            "SS",
-            "SY",
-            "SSY",
-            "SYY",
-            "SSYY",
-            "SYYY",
-            "SYXYYY",
-            "SYbYYY",
-            "SSYbYYY",
-            "SYYbYYY",
-            "SYXYYbYYY",
-            "SYbYYbYYY",
-            "SYbYYbYYa",
-            "SYbYYbYaa",
-            "SYbYYbaaa",
-            "SYbYabaaa",
-            "SYbaabaaa",
-            "Sabaabaaa",
-            "SSabaabaaa",
-            "SYabaabaaa",
-            "Saabaabaaa",
-            "Yaabaabaaa",
-            "aaabaabaaa"
-          ]
-      end
-    end
-  end
-
-  describe 'apply' do
-    it '' do
-      x = NonTerminal.with_char('X')
-      y = NonTerminal.with_char('Y')
-      a = Terminal.with_char('a')
-      line_1 = PseudoString.from_string_default('X')
-      line_2 = PseudoString.from_string_default('YY')
-      line_3 = PseudoString.from_string_default('aY')
-
-      r_1 = rule(x,line_2)
-      r_2 = rule(y,ps([a]))
-      expect(line_1.apply(r_1)).to eq line_2
-      expect(line_2.apply(r_2)).to eq line_3
-      expect(line_2.apply(r_1)).to eq line_2
-    end
-  end
-
-  describe '#parse' do
-    it 'returns nil if no parse exists' do
-      r_0 = rule(NonTerminal.with_char("X"),PseudoString.from_string_default("aXb"))
-      r_1 = rule(NonTerminal.with_char("X"),PseudoString.from_string_default("ab"))
-      rules = [r_0,r_1]
-      given = PseudoString.from_string_default("abb")
-      expect( given.parse(NonTerminal.with_char("X"),rules) ).to eq nil
-    end
-
-    it 'performs incorrectly on palindromes' do
-      start_sym = NonTerminal.with_char("X")
-      r_0 = rule(NonTerminal.with_char("X"), PseudoString.from_string_default("aXa"))
-      r_1 = rule(NonTerminal.with_char("X"), PseudoString.from_string_default("a"))
-      r_2 = rule(NonTerminal.with_char("X"), PseudoString.from_string_default("b"))
-      rules = [r_0,r_1,r_2]
-      given = PseudoString.from_string_default("aba")
-      expect(given.parse(start_sym,rules).map(&:write)).to eq [
-        'X',
-        'aXa',
-        'aba'
-      ]
-    end
   end
 end

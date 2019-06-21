@@ -124,4 +124,70 @@ describe ContextFreeGrammar do
       expect(cfg.rules).to eq [r_1,r_2]
     end
   end
+
+  describe '#parse' do
+    context "Example that used to have bad performance (solved)" do
+      it "leftmost parse" do
+        r_0 = rule(NonTerminal.with_char("S"), "SS".to_pseudo)
+        r_1 = rule(NonTerminal.with_char("S"), "Y".to_pseudo)
+        r_2 = rule(NonTerminal.with_char("Y"), "YXY".to_pseudo)
+        r_3 = rule(NonTerminal.with_char("Y"), "a".to_pseudo)
+        r_4 = rule(NonTerminal.with_char("X"), "b".to_pseudo)
+        start = NonTerminal.with_char("S")
+        rules = [r_0,r_1,r_2,r_3,r_4]
+        given = "aaabaabaaa".to_pseudo
+        step_1 = given.parse(start,rules)
+        expect(step_1&.map{|w| w.to_s}).to eq [
+            "S",
+            "SS",
+            "SY",
+            "SSY",
+            "SYY",
+            "SSYY",
+            "SYYY",
+            "SYXYYY",
+            "SYbYYY",
+            "SSYbYYY",
+            "SYYbYYY",
+            "SYXYYbYYY",
+            "SYbYYbYYY",
+            "SYbYYbYYa",
+            "SYbYYbYaa",
+            "SYbYYbaaa",
+            "SYbYabaaa",
+            "SYbaabaaa",
+            "Sabaabaaa",
+            "SSabaabaaa",
+            "SYabaabaaa",
+            "Saabaabaaa",
+            "Yaabaabaaa",
+            "aaabaabaaa"
+          ]
+      end
+    end
+
+    it 'returns nil if no parse exists' do
+      r_0 = rule(NonTerminal.with_char("X"),"aXb".to_pseudo)
+      r_1 = rule(NonTerminal.with_char("X"),"ab".to_pseudo)
+      rules = [r_0,r_1]
+      given = "abb".to_pseudo
+      expect( given.parse(NonTerminal.with_char("X"),rules) ).to eq nil
+    end
+
+    it 'performs incorrectly on palindromes' do
+      start_sym = NonTerminal.with_char("X")
+      r_0 = rule(NonTerminal.with_char("X"), "aXa".to_pseudo)
+      r_1 = rule(NonTerminal.with_char("X"), "a".to_pseudo)
+      r_2 = rule(NonTerminal.with_char("X"), "b".to_pseudo)
+      rules = [r_0,r_1,r_2]
+      given = "aba".to_pseudo
+      expect(given.parse(start_sym,rules).map(&:to_s)).to eq [
+        'X',
+        'aXa',
+        'aba'
+      ]
+
+    end
+  end
+
 end

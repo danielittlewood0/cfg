@@ -42,6 +42,7 @@ class PseudoString
   
   def apply_at(i,rule)
     return self if i.nil?
+    return self if self.chars[i] != rule.ls
     self[0...i] + rule.rs + self[i+1..-1]
   end
 
