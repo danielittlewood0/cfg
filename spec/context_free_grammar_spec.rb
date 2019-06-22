@@ -173,17 +173,29 @@ describe ContextFreeGrammar do
 
   describe '#parse' do
     context "Example that used to have bad performance (solved)" do
-      it "leftmost parse" do
-        r_0 = rule(NonTerminal.with_char("S"), "SS".to_pseudo)
-        r_1 = rule(NonTerminal.with_char("S"), "Y".to_pseudo)
-        r_2 = rule(NonTerminal.with_char("Y"), "YXY".to_pseudo)
-        r_3 = rule(NonTerminal.with_char("Y"), "a".to_pseudo)
-        r_4 = rule(NonTerminal.with_char("X"), "b".to_pseudo)
-        start = NonTerminal.with_char("S")
-        rules = [r_0,r_1,r_2,r_3,r_4]
+      it "Parses a PseudoString, starting on the left" do
+        s = NonTerminal.with_char("S")
+        x = NonTerminal.with_char("X")
+        y = NonTerminal.with_char("Y")
+        a = Terminal.with_char("a")
+        b = Terminal.with_char("b")
+        start = s
+
+        cfg = ContextFreeGrammar.new(
+          start_symbol: start, 
+          non_terminals: [s,x,y],
+          terminals: [a,b],
+        )
+        cfg.add_string_rule!("S -> SS")
+        cfg.add_string_rule!("S -> Y")
+        cfg.add_string_rule!("Y -> YXY")
+        cfg.add_string_rule!("Y -> a")
+        cfg.add_string_rule!("X -> b")
+
         given = "aaabaabaaa".to_pseudo
-        step_1 = given.parse(start,rules)
-        expect(step_1&.map{|w| w.to_s}).to eq [
+        expect(given).to be_a PseudoString
+        parsed = cfg.parse(given)
+        expect(parsed.map{|w| w.to_s}).to eq [
             "S",
             "SS",
             "SY",
@@ -213,21 +225,34 @@ describe ContextFreeGrammar do
     end
 
     it 'returns nil if no parse exists' do
-      r_0 = rule(NonTerminal.with_char("X"),"aXb".to_pseudo)
-      r_1 = rule(NonTerminal.with_char("X"),"ab".to_pseudo)
-      rules = [r_0,r_1]
+      x = NonTerminal.with_char("X")
+      a = Terminal.with_char("a")
+      b = Terminal.with_char("b")
+      cfg = ContextFreeGrammar.new(
+        start_symbol:x,
+        non_terminals:[x],
+        terminals:[a,b]
+      )
+      cfg.add_string_rule!("X -> aXb")
+      cfg.add_string_rule!("X -> ab")
       given = "abb".to_pseudo
-      expect( given.parse(NonTerminal.with_char("X"),rules) ).to eq nil
+      expect( cfg.parse(given) ).to eq nil
     end
 
-    it 'performs incorrectly on palindromes' do
-      start_sym = NonTerminal.with_char("X")
-      r_0 = rule(NonTerminal.with_char("X"), "aXa".to_pseudo)
-      r_1 = rule(NonTerminal.with_char("X"), "a".to_pseudo)
-      r_2 = rule(NonTerminal.with_char("X"), "b".to_pseudo)
-      rules = [r_0,r_1,r_2]
+    it 'Used to perform incorrectly on palindromes' do
+      x = NonTerminal.with_char("X")
+      a = Terminal.with_char("a")
+      b = Terminal.with_char("b")
+      cfg = ContextFreeGrammar.new(
+        start_symbol: x,
+        non_terminals: [x],
+        terminals: [a,b]
+      )
+      cfg.add_string_rule!("X -> aXa")
+      cfg.add_string_rule!("X -> a")
+      cfg.add_string_rule!("X -> b")
       given = "aba".to_pseudo
-      expect(given.parse(start_sym,rules).map(&:to_s)).to eq [
+      expect(cfg.parse(given).map(&:to_s)).to eq [
         'X',
         'aXa',
         'aba'

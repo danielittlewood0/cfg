@@ -64,6 +64,9 @@ class ContextFreeGrammar
     self.rules << parse_rule(string_rule)
   end
 
+
+
+
   def parse(string_to_parse, derivation=[], seen_before=[])
     return nil if seen_before.include?(string_to_parse)
     seen_before << string_to_parse
@@ -84,7 +87,7 @@ class ContextFreeGrammar
   end
 
   def parse(string_to_parse)
-    string_to_pseudo(string_to_parse).parse(start_symbol,rules)
+    string_to_parse.parse(start_symbol,rules)
   end
 
   def self.default
