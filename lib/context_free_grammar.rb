@@ -55,9 +55,13 @@ class ContextFreeGrammar
     PseudoString.new(parsed_chars)
   end
 
-  def parse_rule(args)
-    ls,rs = args.split(/\s*->\s*/)
-    rule(PseudoString.from_string_default(ls),PseudoString.from_string_default(rs))
+  def parse_rule(string_rule)
+    ls,rs = string_rule.split(/\s*->\s*/)
+    ProductionRule.new(ls: NonTerminal.with_char(ls), rs: string_to_pseudo(rs))
+  end
+
+  def add_string_rule!(string_rule)
+    self.rules << parse_rule(string_rule)
   end
 
   def parse(string_to_parse, derivation=[], seen_before=[])

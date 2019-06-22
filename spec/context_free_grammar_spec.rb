@@ -127,6 +127,50 @@ describe ContextFreeGrammar do
     end
   end
 
+  describe "#parse_rule" do
+    it "converts terminals and non-terminals; wraps up in a Rule" do
+      x = NonTerminal.with_char("x")
+      y = NonTerminal.with_char("y")
+      a = Terminal.with_char("a")
+      b = Terminal.with_char("b")
+
+      cfg = ContextFreeGrammar.new(
+        terminals: [a,b],
+        non_terminals: [x,y],
+      )
+
+      parsed_rule = cfg.parse_rule("X -> aYb")
+      expect(parsed_rule).to be_a ProductionRule
+      expect(parsed_rule.ls).to be_a NonTerminal
+      expect(parsed_rule.ls.to_s).to eq "X"
+      expect(parsed_rule.rs).to be_a PseudoString
+      expect(parsed_rule.rs.to_s).to eq "aYb"
+    end
+  end
+
+  describe "#add_string_rule" do
+    it "parses the rule and puts it in @rules" do
+      x = NonTerminal.with_char("x")
+      y = NonTerminal.with_char("y")
+      a = Terminal.with_char("a")
+      b = Terminal.with_char("b")
+
+      cfg = ContextFreeGrammar.new(
+        terminals: [a,b],
+        non_terminals: [x,y],
+      )
+      expect(cfg.rules.length).to eq 0
+
+      cfg.add_string_rule!("S -> SS")
+      cfg.add_string_rule!("S -> Y")
+      cfg.add_string_rule!("X -> aYb")
+
+      expect(cfg.rules.length).to eq 3
+      expect(cfg.rules.first.ls.to_s).to eq "S"
+      expect(cfg.rules.first.rs.to_s).to eq "SS"
+    end
+  end
+
   describe '#parse' do
     context "Example that used to have bad performance (solved)" do
       it "leftmost parse" do
