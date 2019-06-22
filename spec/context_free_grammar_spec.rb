@@ -105,7 +105,7 @@ describe ContextFreeGrammar do
   end
 
   context "docs" do
-    it "consists of non_terminals, terminals and rules" do
+    it "consists of non_terminals, terminals, a start symbol and rules" do
       x = NonTerminal.with_char("x")
       y = NonTerminal.with_char("y")
       a = Terminal.with_char("a")
@@ -116,12 +116,14 @@ describe ContextFreeGrammar do
       cfg = ContextFreeGrammar.new(
         terminals: [a,b],
         non_terminals: [x,y],
-        rules: [r_1,r_2]
+        rules: [r_1,r_2],
+        start_symbol: x
       )
 
       expect(cfg.non_terminals).to eq [x,y]
       expect(cfg.terminals).to eq [a,b]
       expect(cfg.rules).to eq [r_1,r_2]
+      expect(cfg.start_symbol).to eq x
     end
   end
 

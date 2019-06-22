@@ -2,12 +2,13 @@ require 'non_terminal.rb'
 require 'terminal.rb'
 require 'misc.rb'
 class ContextFreeGrammar
-  attr_accessor :non_terminals, :terminals, :start_sym, :rules
+  attr_accessor :non_terminals, :terminals, :start_symbol, :rules
 
-  def initialize(non_terminals:[], terminals:[], rules:[])
+  def initialize(non_terminals:[], terminals:[], rules:[], start_symbol: nil)
     @non_terminals = non_terminals
     @terminals = terminals
     @rules = rules
+    @start_symbol = start_symbol
   end
 
   def alphabet
