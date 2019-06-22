@@ -40,7 +40,7 @@ class ContextFreeGrammar
       split_args = args.match(/\A\[(.*)\]\Z/)[1].split(',')
       self.terminals += split_args.map{|x| Terminal.new(x)}
     when "START"
-      self.start_sym = NonTerminal.new(args)
+      self.start_symbol = NonTerminal.new(args)
     when "RULE" 
       self.rules << parse_rule(args)
     end
@@ -80,7 +80,7 @@ class ContextFreeGrammar
   end
 
   def parse(string_to_parse)
-    string_to_pseudo(str).parse(start_sym,rules)
+    string_to_pseudo(string_to_parse).parse(start_symbol,rules)
   end
 
   def self.default
