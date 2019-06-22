@@ -46,6 +46,10 @@ class ContextFreeGrammar
     end
   end
 
+  def start_word
+    ps([start_symbol])
+  end
+
   def string_to_pseudo(str)
     parsed_chars = str.scan(alphabet_regex).map{|x| lookup_letter[x]}
     PseudoString.new(parsed_chars)
@@ -56,7 +60,26 @@ class ContextFreeGrammar
     rule(PseudoString.from_string_default(ls),PseudoString.from_string_default(rs))
   end
 
-  def parse(str)
+  def parse(string_to_parse, derivation=[], seen_before=[])
+    return nil if seen_before.include?(string_to_parse)
+    seen_before << string_to_parse
+
+    possible_undos = string_to_parse.leftmost_possible_undos(rules)
+    if string_to_parse == start_word
+      return [start_word] + derivation.reverse
+    elsif possible_undos.empty?
+      return nil
+    else
+      try = []
+      possible_undos.select{|w| !seen_before.include?(w)}.each_with_index do |preword,i|
+        try = preword.parse(derivation + [string_to_parse],seen_before)
+        return try unless try.nil?
+      end
+      return nil
+    end
+  end
+
+  def parse(string_to_parse)
     string_to_pseudo(str).parse(start_sym,rules)
   end
 
