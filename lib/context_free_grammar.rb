@@ -65,8 +65,6 @@ class ContextFreeGrammar
   end
 
 
-
-
   def parse(string_to_parse, derivation=[], seen_before=[])
     return nil if seen_before.include?(string_to_parse)
     seen_before << string_to_parse
@@ -79,15 +77,11 @@ class ContextFreeGrammar
     else
       try = []
       possible_undos.select{|w| !seen_before.include?(w)}.each_with_index do |preword,i|
-        try = preword.parse(derivation + [string_to_parse],seen_before)
+        try = parse(preword, derivation + [string_to_parse], seen_before)
         return try unless try.nil?
       end
       return nil
     end
-  end
-
-  def parse(string_to_parse)
-    string_to_parse.parse(start_symbol,rules)
   end
 
   def self.default
