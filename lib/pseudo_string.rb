@@ -45,10 +45,7 @@ class PseudoString
   end
     
   def index(word)
-    self.each_cons(word.length).each_with_index do |sub_chars,i|
-      return i if ps(sub_chars) == word
-    end
-    return nil 
+    subwords_of_length(word.length).find_index(word)
   end
   
   def apply_at(i,rule)
@@ -79,7 +76,10 @@ class PseudoString
   end
 
   def scan(word)
-    (0...self.length).select{|i| self[i...i+word.length] == word}
+    subwords_of_length(word.length).
+      with_index.
+      select{|sub_word,i| sub_word == word}.
+      map{|sub_word,i| i}
   end
 
   def possible_undos(rules)
