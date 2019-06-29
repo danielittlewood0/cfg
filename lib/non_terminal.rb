@@ -1,4 +1,4 @@
-require 'pseudo_char'
+require_relative 'pseudo_char'
 class NonTerminal < PseudoChar
 end
 

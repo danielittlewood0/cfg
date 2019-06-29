@@ -1,6 +1,6 @@
-require 'terminal'
-require 'non_terminal'
-require 'pseudo_string'
+require_relative 'terminal'
+require_relative 'non_terminal'
+require_relative 'pseudo_string'
 class ProductionRule 
   attr_accessor :ls,:rs 
 

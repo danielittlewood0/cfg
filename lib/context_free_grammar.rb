@@ -1,6 +1,6 @@
-require 'non_terminal.rb'
-require 'terminal.rb'
-require 'misc.rb'
+require_relative 'non_terminal.rb'
+require_relative 'terminal.rb'
+require_relative 'misc.rb'
 class ContextFreeGrammar
   attr_accessor :non_terminals, :terminals, :start_symbol, :rules
 

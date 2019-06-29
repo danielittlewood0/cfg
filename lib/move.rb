@@ -1,4 +1,4 @@
-require 'pseudo_string'
+require_relative 'pseudo_string'
 class Move
   attr_accessor :rule, :index
 
