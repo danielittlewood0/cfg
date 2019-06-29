@@ -8,7 +8,8 @@ class PseudoString
   end
 
   def each
-    chars.each{|char| yield char if block_given?}
+    return to_enum(:each) unless block_given?
+    chars.each{|char| yield char}
   end
 
   def to_s
@@ -36,6 +37,13 @@ class PseudoString
     chars.length
   end
 
+  def subwords_of_length(n)
+    enum_for(:subwords_of_length,n)
+    Enumerator.new do |yielder|
+      self.each_cons(n).each{|sub_chars| yielder << ps(sub_chars)}
+    end
+  end
+    
   def index(word)
     self.each_cons(word.length).each_with_index do |sub_chars,i|
       return i if ps(sub_chars) == word

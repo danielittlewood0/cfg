@@ -3,6 +3,7 @@ describe PseudoString do
   describe Enumerable do
     it "#each enumerates through chars" do
       string = "aXa".to_pseudo
+      expect(string.each).to be_a Enumerator
       expect(string.each.to_a).to eq string.chars
     end
 
@@ -54,6 +55,15 @@ describe PseudoString do
       rs = ps([a,a])
       rul = rule(ls,rs) 
       expect(ps([ls]).apply(rul).to_s).to eq "aa"
+    end
+  end
+
+  describe "#subwords_of_length" do
+    it "Enumerator containing all sub words of self of given length" do
+      word = "abcd".to_pseudo
+      subwords = word.subwords_of_length(2)
+      expect(subwords).to be_a Enumerator
+      expect(subwords.map(&:to_s)).to eq ["ab","bc","cd"]
     end
   end
 
