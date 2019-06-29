@@ -47,7 +47,7 @@ class ContextFreeGrammar
   end
 
   def start_word
-    ps([start_symbol])
+    start_symbol.as_pseudo_string
   end
 
   def string_to_pseudo(str)

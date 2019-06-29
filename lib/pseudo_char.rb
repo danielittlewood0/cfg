@@ -16,4 +16,8 @@ class PseudoChar
   def self.with_char(char)
     self.new(char)
   end
+
+  def as_pseudo_string
+    PseudoString.new([self])
+  end
 end

@@ -12,10 +12,5 @@ class ProductionRule
   def to_s
     ls.to_s + " -> " + rs.to_s
   end
-
-  def ls_as_pseudo_string
-    raise "LHS should be a NonTerminal!" unless ls.is_a?(NonTerminal)
-    return PseudoString.new([ls])
-  end
 end
 

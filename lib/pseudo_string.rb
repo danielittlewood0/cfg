@@ -65,7 +65,7 @@ class PseudoString
     proposed_rs = self[i...i + rs.length]
     if rs == proposed_rs
       after = i + rs.length
-      return self[0...i] + rule.ls_as_pseudo_string + self[after..-1]
+      return self[0...i] + rule.ls.as_pseudo_string + self[after..-1]
     else
       return nil
     end
