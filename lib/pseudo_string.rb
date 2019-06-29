@@ -12,7 +12,7 @@ class PseudoString
   end
 
   def to_s
-    @chars.map{|c| c.char}.join('')
+    reduce(""){|acc,pseudo_char| acc + pseudo_char.char}
   end  
 
   def self.from_string_default(string)
@@ -37,10 +37,8 @@ class PseudoString
   end
 
   def index(word)
-    for i in 0...self.length 
-      if self[i...i+word.chars.length] == word
-        return i
-      end
+    self.each_cons(word.length).each_with_index do |sub_chars,i|
+      return i if ps(sub_chars) == word
     end
     return nil 
   end
