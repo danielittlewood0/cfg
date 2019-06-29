@@ -1,9 +1,14 @@
 require 'misc.rb'
 class PseudoString 
+  include Enumerable
   attr_accessor :chars 
 
   def initialize(chars)
     @chars = chars
+  end
+
+  def each
+    chars.each{|char| yield char if block_given?}
   end
 
   def to_s
@@ -68,13 +73,7 @@ class PseudoString
   end
 
   def scan(word)
-    indices = []
-    for i in 0...self.chars.length 
-      if chars[i...i+word.chars.length] == word.chars
-        indices << i
-      end
-    end
-    return indices 
+    (0...self.length).select{|i| self[i...i+word.length] == word}
   end
 
   def possible_undos(rules)

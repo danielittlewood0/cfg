@@ -1,5 +1,18 @@
 require 'pseudo_string'
 describe PseudoString do
+  describe Enumerable do
+    it "#each enumerates through chars" do
+      string = "aXa".to_pseudo
+      expect(string.each.to_a).to eq string.chars
+    end
+
+    it "mixes in module methods like #each_cons" do
+      string = "aXa".to_pseudo
+      pairs = string.each_cons(2).to_a.map{|sub_chars| PseudoString.new(sub_chars)}
+      expect(pairs.map(&:to_s)).to eq ["aX","Xa"]
+    end
+  end
+
   describe '#to_s' do
     it 'turns a pseudo-string into a string' do
       pseudo_string = PseudoString.from_string_default("hello")
