@@ -2,7 +2,7 @@ require 'pseudo_string'
 describe PseudoString do
   describe '#write' do
     it 'turns a pseudo-string into a string' do
-      pseudo_string = "hello".to_pseudo(non_terms=[],terms="hello".split(''))
+      pseudo_string = "hello".to_pseudo
       string = pseudo_string.write
       expect(string).to eq "hello"
     end
@@ -20,18 +20,16 @@ describe PseudoString do
   end
 
   describe '#+,#+=' do
-    terms = "abc".split('')
-    non_terms = "ABC".split('')
-    str_1 = "aBc".to_pseudo(non_terms,terms)
-    str_2 = "AbC".to_pseudo(non_terms,terms)
+    str_1 = "aBc".to_pseudo
+    str_2 = "AbC".to_pseudo
 
     it 'joins two pseudo-strings' do
-      expect(str_1 + str_2).to eq "aBcAbC".to_pseudo(non_terms,terms)
+      expect(str_1 + str_2).to eq "aBcAbC".to_pseudo
     end
 
     it 'does += work?' do
       str_1 += str_2
-      expect(str_1 + str_2).to eq "aBcAbCAbC".to_pseudo(non_terms,terms)
+      expect(str_1 + str_2).to eq "aBcAbCAbC".to_pseudo
     end
   end
 
@@ -47,14 +45,12 @@ describe PseudoString do
   end
 
   describe '#index' do
-    terms = "abc".split('')
-    non_terms = "ABC".split('')
-    str_1 = "aBc".to_pseudo(non_terms,terms)
-    str_2 = "AbC".to_pseudo(non_terms,terms)
+    str_1 = "aBc".to_pseudo
+    str_2 = "AbC".to_pseudo
 
-    eg_1 = "aBaBaCbAbCaBcAbA".to_pseudo(non_terms,terms)
-    eg_2 = "aCbCbCbCaBcBaBc".to_pseudo(non_terms,terms)
-    eg_3 = "CaCbAbCaBc".to_pseudo(non_terms,terms)
+    eg_1 = "aBaBaCbAbCaBcAbA".to_pseudo
+    eg_2 = "aCbCbCbCaBcBaBc".to_pseudo
+    eg_3 = "CaCbAbCaBc".to_pseudo
     
     it 'returns index of leftmost occurrence of a word' do
       expect(eg_1.index(str_1)).to eq 10
@@ -184,11 +180,9 @@ describe PseudoString do
       x = 'X'.nt
       y = 'Y'.nt
       a = 'a'.t
-      non_terms = ['X','Y']
-      terms = ['a']
-      line_1 = 'X'.to_pseudo(non_terms,terms)
-      line_2 = 'YY'.to_pseudo(non_terms,terms)
-      line_3 = 'aY'.to_pseudo(non_terms,terms)
+      line_1 = 'X'.to_pseudo
+      line_2 = 'YY'.to_pseudo
+      line_3 = 'aY'.to_pseudo
 
       r_1 = rule(ps([x]),line_2)
       r_2 = rule(ps([y]),ps([a]))

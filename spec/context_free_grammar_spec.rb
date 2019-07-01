@@ -86,4 +86,21 @@ describe ContextFreeGrammar do
       expect(cfg.string_to_pseudo(to_parse).chars).to eq [a,a,x,b,x,b]
     end
   end
+
+  describe "::default" do
+    it "lowercase letters are Terminals" do
+      default_terminals = ContextFreeGrammar.default.terminals
+      expect(default_terminals.map(&:to_s)).to include(*('a'..'z').to_a)
+    end
+
+    it "upcase letters are NonTerminals" do
+      default_non_terminals = ContextFreeGrammar.default.non_terminals
+      expect(default_non_terminals.map(&:to_s)).to include(*('A'..'Z').to_a)
+    end
+
+    it "brackets are Terminals" do
+      default_terminals = ContextFreeGrammar.default.terminals
+      expect(default_terminals.map(&:to_s)).to include(*'()[]{}'.split(''))
+    end
+  end
 end
