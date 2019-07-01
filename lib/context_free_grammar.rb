@@ -58,4 +58,12 @@ class ContextFreeGrammar
   def parse(str)
     string_to_pseudo(str).parse(start_sym,rules)
   end
+
+  def self.default
+    cfg = ContextFreeGrammar.new
+    cfg.non_terminals = ('A'..'Z').to_a.map{|x| NonTerminal.new(x)}
+    cfg.terminals = (('a'..'z').to_a + ['(',')','[',']','{','}',']']).map{|x| Terminal.new(x)}
+    cfg.rules = []
+    return cfg
+  end
 end
