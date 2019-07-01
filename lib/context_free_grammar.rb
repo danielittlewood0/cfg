@@ -10,6 +10,22 @@ class ContextFreeGrammar
     @rules = []
   end
 
+  def alphabet
+    non_terminals + terminals
+  end
+
+  def alphabet_regex
+    Regexp.union(*
+      self.alphabet.map do |letter|
+        /#{Regexp.quote(letter.char)}/
+      end
+    )
+  end
+
+  def lookup_letter
+    alphabet.map{|x| [x.char,x]}.to_h
+  end
+
   def execute!(cmd,args)
     non_terminals = []
     terminals = []
@@ -30,8 +46,8 @@ class ContextFreeGrammar
   end
 
   def string_to_pseudo(str)
-    # does not work for multi-char symbols!
-    str.to_pseudo
+    parsed_chars = str.scan(alphabet_regex).map{|x| lookup_letter[x]}
+    PseudoString.new(parsed_chars)
   end
 
   def parse_rule(args)
