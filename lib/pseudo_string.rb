@@ -26,11 +26,11 @@ class PseudoString
 
   def +(other)
     new_chars = self.chars + other.chars
-    ps(new_chars)
+    PseudoString.new(new_chars)
   end
 
   def [](range)
-    ps(chars[range])
+    PseudoString.new(chars[range])
   end
 
   def length
@@ -40,7 +40,7 @@ class PseudoString
   def subwords_of_length(n)
     enum_for(:subwords_of_length,n)
     Enumerator.new do |yielder|
-      self.each_cons(n).each{|sub_chars| yielder << ps(sub_chars)}
+      self.each_cons(n).each{|sub_chars| yielder << PseudoString.new(sub_chars)}
     end
   end
     

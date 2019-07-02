@@ -24,9 +24,9 @@ describe PseudoString do
 
   describe '#==' do
     it 'two strings are the same iff they have the same chars' do
-      hello_1 = ps("hello".split('').map{|c| Terminal.with_char(c)})
-      hello_2 = ps("hello".split('').map{|c| Terminal.with_char(c)})
-      hello_3 = ps("hello".split('').map{|c| NonTerminal.with_char(c)})
+      hello_1 = PseudoString.new("hello".split('').map{|c| Terminal.with_char(c)})
+      hello_2 = PseudoString.new("hello".split('').map{|c| Terminal.with_char(c)})
+      hello_3 = PseudoString.new("hello".split('').map{|c| NonTerminal.with_char(c)})
       
       expect(hello_1 == hello_2).to eq true 
       expect(hello_2 == hello_3).to eq false
@@ -52,9 +52,9 @@ describe PseudoString do
       x = NonTerminal.with_char('X')
       a = Terminal.with_char('a')
       ls = x
-      rs = ps([a,a])
+      rs = PseudoString.new([a,a])
       rul = ProductionRule.new(ls:ls,rs:rs) 
-      expect(ps([ls]).apply(rul).to_s).to eq "aa"
+      expect(PseudoString.new([ls]).apply(rul).to_s).to eq "aa"
     end
   end
 
@@ -94,9 +94,9 @@ describe PseudoString do
       x = NonTerminal.with_char('X')
       a = Terminal.with_char('a')
       ls = x
-      rs = ps([a,a])
+      rs = PseudoString.new([a,a])
       rul = ProductionRule.new(ls:ls,rs:rs) 
-      applied = ps([ls]).apply(rul)
+      applied = PseudoString.new([ls]).apply(rul)
       expect(applied.to_s).to eq "aa"
     end
 
@@ -112,7 +112,7 @@ describe PseudoString do
       line_4 = PseudoString.from_string_default('Ya')
 
       r_1 = ProductionRule.new(ls:x,rs:line_2)
-      r_2 = ProductionRule.new(ls:y,rs:ps([a]))
+      r_2 = ProductionRule.new(ls:y,rs:PseudoString.new([a]))
       expect(line_1.apply(r_1)).to eq line_2
       expect(line_2.apply(r_2)).to eq line_3
       expect(line_2.apply(r_1)).to eq line_2
@@ -125,11 +125,11 @@ describe PseudoString do
       a = Terminal.with_char('a')
       non_terms = ['X','Y']
       terms = ['a']
-      line_1 = ps([x])
-      line_2 = ps([y,y])
+      line_1 = PseudoString.new([x])
+      line_2 = PseudoString.new([y,y])
 
       r_1 = ProductionRule.new(ls:x,rs:line_2)
-      r_2 = ProductionRule.new(ls:y,rs:ps([a]))
+      r_2 = ProductionRule.new(ls:y,rs:PseudoString.new([a]))
       expect(line_1.apply(r_2)).to eq line_1
       expect(line_1.apply_at(1,r_2)).to eq line_1
     end
@@ -139,12 +139,12 @@ describe PseudoString do
     x = NonTerminal.with_char('X')
     a = Terminal.with_char('a')
     ls = x
-    rs = ps([a,a])
+    rs = PseudoString.new([a,a])
     rul = ProductionRule.new(ls:ls,rs:rs) 
-    applied = ps([ls]).apply(rul)
+    applied = PseudoString.new([ls]).apply(rul)
     it '#unapply_at undoes this application (but needs index)' do
       unapplied_1 = applied.unapply_at(0,rul)
-      expect(unapplied_1).to eq ps([ls])
+      expect(unapplied_1).to eq PseudoString.new([ls])
     end
     it "returns nil if given nil index" do
       unapplied_2 = applied.unapply_at(nil,rul)
@@ -157,7 +157,7 @@ describe PseudoString do
 
     it '#unapply undoes the leftmost instance' do
       unapplied_4 = applied.unapply(rul)
-      expect(unapplied_4).to eq ps([ls])
+      expect(unapplied_4).to eq PseudoString.new([ls])
     end
   end
 
