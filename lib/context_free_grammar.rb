@@ -64,16 +64,18 @@ class ContextFreeGrammar
   end
 
   def add_string_terminal!(char)
-    terminals << Terminal.with_char(char)
+    new_char = Terminal.with_char(char)
+    terminals << new_char unless self.terminals.include?(new_char)
   end
 
   def add_string_non_terminal!(char)
-    non_terminals << NonTerminal.with_char(char)
+    new_char = NonTerminal.with_char(char)
+    non_terminals << new_char unless self.non_terminals.include?(new_char)
   end
 
   def set_string_start_symbol!(char)
     self.start_symbol = NonTerminal.with_char(char)
-    self.add_string_non_terminal!(char) unless self.non_terminals.include?(self.start_symbol)
+    self.add_string_non_terminal!(char) 
   end
 
   def parse(string_to_parse, derivation=[], seen_before=[])

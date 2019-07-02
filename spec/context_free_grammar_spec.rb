@@ -271,8 +271,12 @@ describe ContextFreeGrammar do
       expect(cfg.terminals).to eq [Terminal.with_char('a')]
     end
 
-    xit "prevents duplicates" do
+    it "prevents duplicates" do
+      cfg = ContextFreeGrammar.new
 
+      cfg.add_string_terminal!('a')
+      cfg.add_string_terminal!('a')
+      expect(cfg.terminals).to eq [Terminal.with_char('a')]
     end
   end
 
@@ -284,8 +288,12 @@ describe ContextFreeGrammar do
       expect(cfg.non_terminals).to eq [NonTerminal.with_char('X')]
     end
 
-    xit "prevents duplicates" do
+    it "prevents duplicates" do
+      cfg = ContextFreeGrammar.new
 
+      cfg.add_string_non_terminal!('X')
+      cfg.add_string_non_terminal!('X')
+      expect(cfg.non_terminals).to eq [NonTerminal.with_char('X')]
     end
   end
 
