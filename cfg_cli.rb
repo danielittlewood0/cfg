@@ -28,9 +28,8 @@ loop do
   word = $stdin.gets.chomp
   break if word == "exit"
   puts "OK, parsing \"#{word}\"..."
-  steps = cfg.parse(word)
-  if steps[0] != ps([cfg.start_symbol])
-    puts steps
+  steps = cfg.parse(cfg.string_to_pseudo(word))
+  if steps.nil?
     puts "parse failed! The word #{word} is not in the language."
   else
     puts steps
