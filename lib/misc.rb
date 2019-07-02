@@ -5,6 +5,3 @@ require_relative 'move.rb'
 require_relative 'pseudo_string.rb'
 require_relative 'context_free_grammar.rb'
 
-def move(rule,index)
-  Move.new(rule: rule,index: index)
-end
