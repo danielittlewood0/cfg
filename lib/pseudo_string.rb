@@ -1,4 +1,3 @@
-require_relative 'misc.rb'
 class PseudoString 
   include Enumerable
   attr_accessor :chars 
