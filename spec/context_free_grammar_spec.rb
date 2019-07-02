@@ -263,4 +263,71 @@ describe ContextFreeGrammar do
     end
   end
 
+  describe "#add_string_terminal!" do
+    it "adds a terminal to the list" do
+      cfg = ContextFreeGrammar.new
+
+      cfg.add_string_terminal!('a')
+      expect(cfg.terminals).to eq [Terminal.with_char('a')]
+    end
+
+    xit "prevents duplicates" do
+
+    end
+  end
+
+  describe "#add_string_non_terminal!" do
+    it "adds a non_terminal to the list" do
+      cfg = ContextFreeGrammar.new
+
+      cfg.add_string_non_terminal!('X')
+      expect(cfg.non_terminals).to eq [NonTerminal.with_char('X')]
+    end
+
+    xit "prevents duplicates" do
+
+    end
+  end
+
+  describe "#set_string_start_symbol" do
+    it "sets the start symbol" do
+      cfg = ContextFreeGrammar.new
+
+      cfg.set_string_start_symbol!('S')
+      expect(cfg.start_symbol).to be_a NonTerminal
+      expect(cfg.start_symbol.to_s).to eq 'S'
+    end
+  end
+
+  describe "#execute! parses commands and modifies the CFG" do
+    it "#NON TERMINALS calls #add_string_non_terminal! on each arg" do
+      cfg = ContextFreeGrammar.new
+      expect(cfg).to receive(:add_string_non_terminal!).with('x')
+      expect(cfg).to receive(:add_string_non_terminal!).with('y')
+      expect(cfg).to receive(:add_string_non_terminal!).with('z')
+
+      cfg.execute!('NON TERMINALS', '[x,y,z]')
+    end
+    
+    it "#TERMINALS calls #add_string_terminal! on each arg" do
+      cfg = ContextFreeGrammar.new
+      expect(cfg).to receive(:add_string_terminal!).with('a')
+      expect(cfg).to receive(:add_string_terminal!).with('b')
+      expect(cfg).to receive(:add_string_terminal!).with('c')
+
+      cfg.execute!('TERMINALS', '[a,b,c]')
+    end
+
+    it "#START calls #set_string_start_symbol! on args" do
+      cfg = ContextFreeGrammar.new
+      expect(cfg).to receive(:add_string_non_terminal!).with('S')
+      cfg.execute!('START', 'S')
+    end
+
+    it "#RULE calls #add_string_rule! on args" do
+      cfg = ContextFreeGrammar.new
+      expect(cfg).to receive(:add_string_rule!).with('S -> SS')
+      cfg.execute!('RULE', 'S -> SS')
+    end
+  end
 end

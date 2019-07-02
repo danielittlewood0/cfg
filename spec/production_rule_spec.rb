@@ -27,5 +27,16 @@ describe ProductionRule do
     end
   end
 
+  describe "#to_s" do
+    it "ls -> rs" do
+      x = NonTerminal.with_char('X')
+      a = Terminal.with_char('a')
+      b = Terminal.with_char('b')
+      rule = ProductionRule.new(ls:x,rs:PseudoString.new([a,b]))
+
+      expect(rule.to_s).to eq "X -> ab"
+    end
+  end
+
 end
 

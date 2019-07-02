@@ -34,14 +34,14 @@ class ContextFreeGrammar
     case cmd
     when "NON TERMINALS" 
       split_args = args.match(/\A\[(.*)\]\Z/)[1].split(',')
-      self.non_terminals += split_args.map{|x| NonTerminal.new(x)}
+      split_args.each{|x| add_string_non_terminal!(x)}
     when "TERMINALS"
       split_args = args.match(/\A\[(.*)\]\Z/)[1].split(',')
-      self.terminals += split_args.map{|x| Terminal.new(x)}
+      split_args.each{|x| add_string_terminal!(x)}
     when "START"
-      self.start_symbol = NonTerminal.new(args)
+      self.set_string_start_symbol!(args)
     when "RULE" 
-      self.rules << parse_rule(args)
+      self.add_string_rule!(args)
     end
   end
 
@@ -63,6 +63,18 @@ class ContextFreeGrammar
     self.rules << parse_rule(string_rule)
   end
 
+  def add_string_terminal!(char)
+    terminals << Terminal.with_char(char)
+  end
+
+  def add_string_non_terminal!(char)
+    non_terminals << NonTerminal.with_char(char)
+  end
+
+  def set_string_start_symbol!(char)
+    self.start_symbol = NonTerminal.with_char(char)
+    self.add_string_non_terminal!(char) unless self.non_terminals.include?(self.start_symbol)
+  end
 
   def parse(string_to_parse, derivation=[], seen_before=[])
     return nil if seen_before.include?(string_to_parse)
