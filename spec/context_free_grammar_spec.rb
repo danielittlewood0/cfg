@@ -67,7 +67,7 @@ describe ContextFreeGrammar do
       b = Terminal.new('b')
       cfg.terminals = [a,b]
       cfg.non_terminals = [x]
-      cfg.start_sym = x
+      cfg.start_symbol = x
       to_match = cfg.string_to_pseudo("aaXbXb")
       expect(to_match).to be_a PseudoString
       expect(to_match.chars).to eq [a,a,x,b,x,b]
@@ -80,7 +80,7 @@ describe ContextFreeGrammar do
       b = Terminal.new('\beta')
       cfg.terminals = [a,b]
       cfg.non_terminals = [x]
-      cfg.start_sym = x
+      cfg.start_symbol = x
       to_parse = "\\alpha\\alpha<X>\\beta<X>\\beta"
       expect(cfg.string_to_pseudo(to_parse)).to be_a PseudoString
       expect(cfg.string_to_pseudo(to_parse).chars).to eq [a,a,x,b,x,b]
@@ -129,8 +129,8 @@ describe ContextFreeGrammar do
 
   describe "#parse_rule" do
     it "converts terminals and non-terminals; wraps up in a Rule" do
-      x = NonTerminal.with_char("x")
-      y = NonTerminal.with_char("y")
+      x = NonTerminal.with_char("X")
+      y = NonTerminal.with_char("Y")
       a = Terminal.with_char("a")
       b = Terminal.with_char("b")
 
@@ -150,14 +150,16 @@ describe ContextFreeGrammar do
 
   describe "#add_string_rule" do
     it "parses the rule and puts it in @rules" do
-      x = NonTerminal.with_char("x")
-      y = NonTerminal.with_char("y")
+      x = NonTerminal.with_char("X")
+      y = NonTerminal.with_char("Y")
+      s = NonTerminal.with_char("S")
       a = Terminal.with_char("a")
       b = Terminal.with_char("b")
 
       cfg = ContextFreeGrammar.new(
         terminals: [a,b],
-        non_terminals: [x,y],
+        non_terminals: [s,x,y],
+        start_symbol: s
       )
       expect(cfg.rules.length).to eq 0
 
@@ -192,7 +194,7 @@ describe ContextFreeGrammar do
         cfg.add_string_rule!("Y -> a")
         cfg.add_string_rule!("X -> b")
 
-        given = "aaabaabaaa".to_pseudo
+        given = PseudoString.from_string_default("aaabaabaaa")
         expect(given).to be_a PseudoString
         parsed = cfg.parse(given)
         expect(parsed.map{|w| w.to_s}).to eq [
@@ -235,7 +237,7 @@ describe ContextFreeGrammar do
       )
       cfg.add_string_rule!("X -> aXb")
       cfg.add_string_rule!("X -> ab")
-      given = "abb".to_pseudo
+      given = PseudoString.from_string_default("abb")
       expect( cfg.parse(given) ).to eq nil
     end
 
@@ -251,7 +253,7 @@ describe ContextFreeGrammar do
       cfg.add_string_rule!("X -> aXa")
       cfg.add_string_rule!("X -> a")
       cfg.add_string_rule!("X -> b")
-      given = "aba".to_pseudo
+      given = PseudoString.from_string_default("aba")
       expect(cfg.parse(given).map(&:to_s)).to eq [
         'X',
         'aXa',

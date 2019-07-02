@@ -2,13 +2,13 @@ require 'pseudo_string'
 describe PseudoString do
   describe Enumerable do
     it "#each enumerates through chars" do
-      string = "aXa".to_pseudo
+      string = PseudoString.from_string_default("aXa")
       expect(string.each).to be_a Enumerator
       expect(string.each.to_a).to eq string.chars
     end
 
     it "mixes in module methods like #each_cons" do
-      string = "aXa".to_pseudo
+      string = PseudoString.from_string_default("aXa")
       pairs = string.each_cons(2).to_a.map{|sub_chars| PseudoString.new(sub_chars)}
       expect(pairs.map(&:to_s)).to eq ["aX","Xa"]
     end
@@ -17,7 +17,7 @@ describe PseudoString do
   describe '#to_s' do
     it 'turns a pseudo-string into a string' do
       pseudo_string = PseudoString.from_string_default("hello")
-      string = pseudo_string.write
+      string = pseudo_string.to_s
       expect(string).to eq "hello"
     end
   end
@@ -60,7 +60,7 @@ describe PseudoString do
 
   describe "#subwords_of_length" do
     it "Enumerator containing all sub words of self of given length" do
-      word = "abcd".to_pseudo
+      word = PseudoString.from_string_default("abcd")
       subwords = word.subwords_of_length(2)
       expect(subwords).to be_a Enumerator
       expect(subwords.map(&:to_s)).to eq ["ab","bc","cd"]
@@ -106,10 +106,10 @@ describe PseudoString do
       a = Terminal.with_char('a')
       non_terms = ['X','Y']
       terms = ['a']
-      line_1 = 'X'.to_pseudo(non_terms,terms)
-      line_2 = 'YY'.to_pseudo(non_terms,terms)
-      line_3 = 'aY'.to_pseudo(non_terms,terms)
-      line_4 = 'Ya'.to_pseudo(non_terms,terms)
+      line_1 = PseudoString.from_string_default('X')
+      line_2 = PseudoString.from_string_default('YY')
+      line_3 = PseudoString.from_string_default('aY')
+      line_4 = PseudoString.from_string_default('Ya')
 
       r_1 = rule(x,line_2)
       r_2 = rule(y,ps([a]))
