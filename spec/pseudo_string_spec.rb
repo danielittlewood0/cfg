@@ -53,7 +53,7 @@ describe PseudoString do
       a = Terminal.with_char('a')
       ls = x
       rs = ps([a,a])
-      rul = rule(ls,rs) 
+      rul = ProductionRule.new(ls:ls,rs:rs) 
       expect(ps([ls]).apply(rul).to_s).to eq "aa"
     end
   end
@@ -95,7 +95,7 @@ describe PseudoString do
       a = Terminal.with_char('a')
       ls = x
       rs = ps([a,a])
-      rul = rule(ls,rs) 
+      rul = ProductionRule.new(ls:ls,rs:rs) 
       applied = ps([ls]).apply(rul)
       expect(applied.to_s).to eq "aa"
     end
@@ -111,8 +111,8 @@ describe PseudoString do
       line_3 = PseudoString.from_string_default('aY')
       line_4 = PseudoString.from_string_default('Ya')
 
-      r_1 = rule(x,line_2)
-      r_2 = rule(y,ps([a]))
+      r_1 = ProductionRule.new(ls:x,rs:line_2)
+      r_2 = ProductionRule.new(ls:y,rs:ps([a]))
       expect(line_1.apply(r_1)).to eq line_2
       expect(line_2.apply(r_2)).to eq line_3
       expect(line_2.apply(r_1)).to eq line_2
@@ -128,8 +128,8 @@ describe PseudoString do
       line_1 = ps([x])
       line_2 = ps([y,y])
 
-      r_1 = rule(x,line_2)
-      r_2 = rule(y,ps([a]))
+      r_1 = ProductionRule.new(ls:x,rs:line_2)
+      r_2 = ProductionRule.new(ls:y,rs:ps([a]))
       expect(line_1.apply(r_2)).to eq line_1
       expect(line_1.apply_at(1,r_2)).to eq line_1
     end
@@ -140,7 +140,7 @@ describe PseudoString do
     a = Terminal.with_char('a')
     ls = x
     rs = ps([a,a])
-    rul = rule(ls,rs) 
+    rul = ProductionRule.new(ls:ls,rs:rs) 
     applied = ps([ls]).apply(rul)
     it '#unapply_at undoes this application (but needs index)' do
       unapplied_1 = applied.unapply_at(0,rul)
@@ -165,7 +165,7 @@ describe PseudoString do
     word = PseudoString.from_string_default("aaaababababaababababaaababa")
     ls = NonTerminal.with_char("X")
     rs = PseudoString.from_string_default("aa")
-    rule = rule(ls,rs)
+    rule = ProductionRule.new(ls:ls,rs:rs)
     it 'finds all the indices a subword begins at' do
       indices = word.scan(PseudoString.from_string_default("aa"))
       expect(indices).to eq [0,1,2,11,20,21]

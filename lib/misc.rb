@@ -5,14 +5,6 @@ require_relative 'move.rb'
 require_relative 'pseudo_string.rb'
 require_relative 'context_free_grammar.rb'
 
-class String
-end
-
-def rule(ls,rs) 
-  raise "LHS should be a NonTerminal!" if !ls.is_a?(NonTerminal)
-  ProductionRule.new(ls: ls,rs: rs) 
-end
-
 def ps(chars)
   PseudoString.new(chars) 
 end
