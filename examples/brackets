@@ -6,5 +6,3 @@ RULE : X -> (X)
 RULE : X -> ()
 RULE : X -> XX
 RULE : X -> a
-
-
