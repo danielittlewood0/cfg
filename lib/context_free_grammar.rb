@@ -52,7 +52,7 @@ class ContextFreeGrammar
 
   def parse_rule(args)
     ls,rs = args.split(/\s*->\s*/)
-    rule(ls.to_pseudo,rs.to_pseudo)
+    rule(PseudoString.from_string_default(ls),PseudoString.from_string_default(rs))
   end
 
   def parse(str)

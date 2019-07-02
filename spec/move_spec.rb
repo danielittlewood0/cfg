@@ -1,8 +1,8 @@
 require 'move'
 describe Move do 
   it 'represents a move being applied at some index' do
-    ls = "X".to_pseudo
-    rs = "aa".to_pseudo
+    ls = PseudoString.from_string_default("X")
+    rs = PseudoString.from_string_default("aa")
     rule = rule(ls,rs)
     move = move(rule,1)
     expect(move.class).to eq Move 

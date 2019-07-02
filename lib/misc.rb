@@ -6,24 +6,6 @@ require 'pseudo_string.rb'
 require 'context_free_grammar.rb'
 
 class String
-# def to_pseudo(non_terms=('A'..'Z').to_a,terms=('a'..'z').to_a + 
-#               ['(',')','[',']','{','}',']'])
-#   chars = self.split('')
-#   new_chars = []
-#   chars.each do |c| 
-#     if non_terms.include?(c)
-#       new_chars << NonTerminal.new(c)
-#     elsif terms.include?(c)
-#       new_chars << Terminal.new(c)
-#     end
-#   end
-#   return ps(new_chars)
-# end
-
-  def to_pseudo
-    ContextFreeGrammar.default.string_to_pseudo(self)
-  end
-
   def nt
     NonTerminal.new(self)
   end

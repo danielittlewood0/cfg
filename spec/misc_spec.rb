@@ -18,7 +18,7 @@ describe String do
 
   describe '#to_psuedo' do
     it 'Given list of terms and non terms, turns string into pseudo string' do
-      str = "XXaaXYb".to_pseudo
+      str = PseudoString.from_string_default("XXaaXYb")
       expect(str).to be_a PseudoString 
       expect(str.chars).to eq ["X".nt, "X".nt, "a".t, "a".t, "X".nt, "Y".nt, "b".t]
     end

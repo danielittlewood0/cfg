@@ -10,6 +10,10 @@ class PseudoString
     write
   end
 
+  def self.from_string_default(string)
+    ContextFreeGrammar.default.string_to_pseudo(string)
+  end
+
   def write
     @chars.map{|c| c.char}.join('')
   end  
@@ -108,4 +112,5 @@ class PseudoString
       return nil
     end
   end
+
 end
