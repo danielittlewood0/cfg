@@ -1,18 +1,32 @@
 require 'pseudo_string'
 describe PseudoString do
-  describe '#write' do
+  describe Enumerable do
+    it "#each enumerates through chars" do
+      string = PseudoString.from_string_default("aXa")
+      expect(string.each).to be_a Enumerator
+      expect(string.each.to_a).to eq string.chars
+    end
+
+    it "mixes in module methods like #each_cons" do
+      string = PseudoString.from_string_default("aXa")
+      pairs = string.each_cons(2).to_a.map{|sub_chars| PseudoString.new(sub_chars)}
+      expect(pairs.map(&:to_s)).to eq ["aX","Xa"]
+    end
+  end
+
+  describe '#to_s' do
     it 'turns a pseudo-string into a string' do
       pseudo_string = PseudoString.from_string_default("hello")
-      string = pseudo_string.write
+      string = pseudo_string.to_s
       expect(string).to eq "hello"
     end
   end
 
   describe '#==' do
     it 'two strings are the same iff they have the same chars' do
-      hello_1 = ps("hello".split('').map{|c| c.t})
-      hello_2 = ps("hello".split('').map{|c| c.t})
-      hello_3 = ps("hello".split('').map{|c| c.nt})
+      hello_1 = PseudoString.new("hello".split('').map{|c| Terminal.with_char(c)})
+      hello_2 = PseudoString.new("hello".split('').map{|c| Terminal.with_char(c)})
+      hello_3 = PseudoString.new("hello".split('').map{|c| NonTerminal.with_char(c)})
       
       expect(hello_1 == hello_2).to eq true 
       expect(hello_2 == hello_3).to eq false
@@ -35,12 +49,21 @@ describe PseudoString do
 
   describe '#apply_rule' do
     it 'replaces the leftmost instance of ls with rs' do
-      x = 'X'.nt
-      a = 'a'.t
-      ls = ps([x])
-      rs = ps([a,a])
-      rul = rule(ls,rs) 
-      expect(ls.apply(rul).write).to eq "aa"
+      x = NonTerminal.with_char('X')
+      a = Terminal.with_char('a')
+      ls = x
+      rs = PseudoString.new([a,a])
+      rul = ProductionRule.new(ls:ls,rs:rs) 
+      expect(PseudoString.new([ls]).apply(rul).to_s).to eq "aa"
+    end
+  end
+
+  describe "#subwords_of_length" do
+    it "Enumerator containing all sub words of self of given length" do
+      word = PseudoString.from_string_default("abcd")
+      subwords = word.subwords_of_length(2)
+      expect(subwords).to be_a Enumerator
+      expect(subwords.map(&:to_s)).to eq ["ab","bc","cd"]
     end
   end
 
@@ -66,33 +89,62 @@ describe PseudoString do
     end
   end
 
-
-  describe '#apply,#unapply' do
-    x = 'X'.nt
-    a = 'a'.t
-    ls = ps([x])
-    rs = ps([a,a])
-    rul = rule(ls,rs) 
-    applied = ls.apply(rul)
-    it '#apply replaces X by aa' do
-      expect(applied.write).to eq "aa"
+  describe '#apply, #apply_at' do
+    it "apply replaces leftmost X by aa" do
+      x = NonTerminal.with_char('X')
+      a = Terminal.with_char('a')
+      ls = x
+      rs = PseudoString.new([a,a])
+      rul = ProductionRule.new(ls:ls,rs:rs) 
+      applied = PseudoString.new([ls]).apply(rul)
+      expect(applied.to_s).to eq "aa"
     end
-    unapplied_2 = applied.unapply(rul)
-    it '#unapply undoes the leftmost instance' do
-      expect(unapplied_2).to eq ls
+
+    it "apply_at replaces at a given point" do
+      x = NonTerminal.with_char('X')
+      y = NonTerminal.with_char('Y')
+      a = Terminal.with_char('a')
+      non_terms = ['X','Y']
+      terms = ['a']
+      line_1 = PseudoString.from_string_default('X')
+      line_2 = PseudoString.from_string_default('YY')
+      line_3 = PseudoString.from_string_default('aY')
+      line_4 = PseudoString.from_string_default('Ya')
+
+      r_1 = ProductionRule.new(ls:x,rs:line_2)
+      r_2 = ProductionRule.new(ls:y,rs:PseudoString.new([a]))
+      expect(line_1.apply(r_1)).to eq line_2
+      expect(line_2.apply(r_2)).to eq line_3
+      expect(line_2.apply(r_1)).to eq line_2
+      expect(line_2.apply_at(1,r_2)).to eq line_4
+    end
+
+    it "apply_at returns self if no application" do
+      x = NonTerminal.with_char('X')
+      y = NonTerminal.with_char('Y')
+      a = Terminal.with_char('a')
+      non_terms = ['X','Y']
+      terms = ['a']
+      line_1 = PseudoString.new([x])
+      line_2 = PseudoString.new([y,y])
+
+      r_1 = ProductionRule.new(ls:x,rs:line_2)
+      r_2 = ProductionRule.new(ls:y,rs:PseudoString.new([a]))
+      expect(line_1.apply(r_2)).to eq line_1
+      expect(line_1.apply_at(1,r_2)).to eq line_1
     end
   end
 
-  describe "#unapply_at" do
-    x = 'X'.nt
-    a = 'a'.t
-    ls = ps([x])
-    rs = ps([a,a])
-    rul = rule(ls,rs) 
-    applied = ls.apply(rul)
+  describe "#unapply, #unapply_at" do
+    x = NonTerminal.with_char('X')
+    a = Terminal.with_char('a')
+    ls = x
+    rs = PseudoString.new([a,a])
+    rul = ProductionRule.new(ls:ls,rs:rs) 
+    applied = PseudoString.new([ls]).apply(rul)
     it '#unapply_at undoes this application (but needs index)' do
       unapplied_1 = applied.unapply_at(0,rul)
-      expect(unapplied_1).to eq ls
+      expect(unapplied_1).to eq PseudoString.new([ls])
     end
     it "returns nil if given nil index" do
       unapplied_2 = applied.unapply_at(nil,rul)
@@ -102,23 +154,28 @@ describe PseudoString do
       unapplied_3 = applied.unapply_at(1,rul)
       expect(unapplied_3).to eq nil
     end
+
+    it '#unapply undoes the leftmost instance' do
+      unapplied_4 = applied.unapply(rul)
+      expect(unapplied_4).to eq PseudoString.new([ls])
+    end
   end
 
   describe '#scan,#possible_undos' do
     word = PseudoString.from_string_default("aaaababababaababababaaababa")
-    ls = PseudoString.from_string_default("X")
+    ls = NonTerminal.with_char("X")
     rs = PseudoString.from_string_default("aa")
-    rule = rule(ls,rs)
+    rule = ProductionRule.new(ls:ls,rs:rs)
     it 'finds all the indices a subword begins at' do
       indices = word.scan(PseudoString.from_string_default("aa"))
       expect(indices).to eq [0,1,2,11,20,21]
     end
     it 'fixed bug in #unapply' do
-      expect(word.unapply_at(1,rule).write).to eq "aXababababaababababaaababa"
+      expect(word.unapply_at(1,rule).to_s).to eq "aXababababaababababaaababa"
     end
    it 'finds all possible words an application could have come from' do
      possible_undos = word.possible_undos([rule])
-     expect(possible_undos.map{|w| w.write}).to eq ["Xaababababaababababaaababa",
+     expect(possible_undos.map{|w| w.to_s}).to eq ["Xaababababaababababaaababa",
                                                     "aXababababaababababaaababa",
                                                     "aaXbabababaababababaaababa",
                                                     "aaaababababXbabababaaababa",
@@ -128,95 +185,7 @@ describe PseudoString do
 
    it 'finds all possible words an application could have come from (leftmost)' do
      possible_undos = word.leftmost_possible_undos([rule])
-     expect(possible_undos.map{|w| w.write}).to eq ["Xaababababaababababaaababa"]
+     expect(possible_undos.map{|w| w.to_s}).to eq ["Xaababababaababababaaababa"]
    end
   end
-
-  describe '#parse,#try_unapply,#unapply_failed' do
-    r_0 = rule(PseudoString.from_string_default("S"),PseudoString.from_string_default("SS"))
-    r_1 = rule(PseudoString.from_string_default("S"),PseudoString.from_string_default("Y"))
-    r_2 = rule(PseudoString.from_string_default("Y"),PseudoString.from_string_default("YXY"))
-    r_3 = rule(PseudoString.from_string_default("Y"),PseudoString.from_string_default("a"))
-    r_4 = rule(PseudoString.from_string_default("X"),PseudoString.from_string_default("b"))
-    start = PseudoString.from_string_default("S")
-    rules = [r_0,r_1,r_2,r_3,r_4]
-    given = PseudoString.from_string_default("aaabaabaaa")
-
-    context "Example that used to have bad performance (solved)" do
-      it "leftmost parse" do
-        step_1 = given.parse("S".nt,rules)
-        expect(step_1.map{|w| w.write}).to eq [
-            "S",
-            "SS",
-            "SY",
-            "SSY",
-            "SYY",
-            "SSYY",
-            "SYYY",
-            "SYXYYY",
-            "SYbYYY",
-            "SSYbYYY",
-            "SYYbYYY",
-            "SYXYYbYYY",
-            "SYbYYbYYY",
-            "SYbYYbYYa",
-            "SYbYYbYaa",
-            "SYbYYbaaa",
-            "SYbYabaaa",
-            "SYbaabaaa",
-            "Sabaabaaa",
-            "SSabaabaaa",
-            "SYabaabaaa",
-            "Saabaabaaa",
-            "Yaabaabaaa",
-            "aaabaabaaa"
-          ]
-      end
-    end
-  end
-
-  describe 'apply' do
-    it '' do
-      x = 'X'.nt
-      y = 'Y'.nt
-      a = 'a'.t
-      line_1 = PseudoString.from_string_default('X')
-      line_2 = PseudoString.from_string_default('YY')
-      line_3 = PseudoString.from_string_default('aY')
-
-      r_1 = rule(ps([x]),line_2)
-      r_2 = rule(ps([y]),ps([a]))
-      expect(line_1.apply(r_1)).to eq line_2
-      expect(line_2.apply(r_2)).to eq line_3
-      expect(line_2.apply(r_1)).to eq line_2
-    end
-  end
-
-  describe '#parse' do
-    it 'returns nil if no parse exists' do
-      r_0 = rule(PseudoString.from_string_default("X"),PseudoString.from_string_default("aXb"))
-      r_1 = rule(PseudoString.from_string_default("X"),PseudoString.from_string_default("ab"))
-      rules = [r_0,r_1]
-      given = PseudoString.from_string_default("abb")
-      expect( given.parse("X".nt,rules) ).to eq nil
-    end
-
-    it 'performs incorrectly on palindromes' do
-      start_sym = "X".nt
-      r_0 = rule(PseudoString.from_string_default("X"),PseudoString.from_string_default("aXa"))
-      r_1 = rule(PseudoString.from_string_default("X"),PseudoString.from_string_default("a"))
-      r_2 = rule(PseudoString.from_string_default("X"),PseudoString.from_string_default("b"))
-      rules = [r_0,r_1,r_2]
-      given = PseudoString.from_string_default("aba")
-      expect(given.parse(start_sym,rules).map(&:write)).to eq [
-        'X',
-        'aXa',
-        'aba'
-      ]
-
-
-    end
-  end
-
-
 end

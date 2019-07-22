@@ -1,56 +1,60 @@
-require 'misc.rb'
 class PseudoString 
+  include Enumerable
   attr_accessor :chars 
 
   def initialize(chars)
     @chars = chars
   end
 
-  def to_s
-    write
+  def each
+    return to_enum(:each) unless block_given?
+    chars.each{|char| yield char}
   end
+
+  def to_s
+    reduce(""){|acc,pseudo_char| acc + pseudo_char.char}
+  end  
 
   def self.from_string_default(string)
     ContextFreeGrammar.default.string_to_pseudo(string)
   end
 
-  def write
-    @chars.map{|c| c.char}.join('')
-  end  
-
   def ==(other)
-    self.chars == other.chars
+    (self.class == other.class) && (self.chars == other.chars)
   end
 
   def +(other)
     new_chars = self.chars + other.chars
-    ps(new_chars)
+    PseudoString.new(new_chars)
   end
 
   def [](range)
-    ps(chars[range])
+    PseudoString.new(chars[range])
   end
 
   def length
     chars.length
   end
 
-  def index(word)
-    for i in 0...self.length 
-      if self[i...i+word.chars.length] == word
-        return i
-      end
+  def subwords_of_length(n)
+    enum_for(:subwords_of_length,n)
+    Enumerator.new do |yielder|
+      self.each_cons(n).each{|sub_chars| yielder << PseudoString.new(sub_chars)}
     end
-    return nil 
+  end
+    
+  def index(word)
+    subwords_of_length(word.length).find_index(word)
   end
   
   def apply_at(i,rule)
     return self if i.nil?
+    return self if self.chars[i] != rule.ls
     self[0...i] + rule.rs + self[i+1..-1]
   end
 
   def apply(rule)
-    i = self.chars.index(rule.ls.chars.first)
+    i = self.chars.index(rule.ls)
     apply_at(i,rule)
   end
 
@@ -60,10 +64,9 @@ class PseudoString
     proposed_rs = self[i...i + rs.length]
     if rs == proposed_rs
       after = i + rs.length
-      return self[0...i] + rule.ls + self[after..-1]
+      return self[0...i] + rule.ls.as_pseudo_string + self[after..-1]
     else
       return nil
-      raise "#{rs.write} is different from #{proposed_rs.write}"
     end
   end
 
@@ -72,45 +75,21 @@ class PseudoString
   end
 
   def scan(word)
-    indices = []
-    for i in 0...self.chars.length 
-      if chars[i...i+word.chars.length] == word.chars
-        indices << i
-      end
-    end
-    return indices 
+    subwords_of_length(word.length).
+      with_index.
+      select{|sub_word,i| sub_word == word}.
+      map{|sub_word,i| i}
   end
 
   def possible_undos(rules)
-    rules.map{|rule| scan(rule.rs).
-              map{|i| unapply_at(i,rule)}}.flatten
+    rules.map{|rule| scan(rule.rs).map{|i| unapply_at(i,rule)}}.flatten
+  end
+
+  def sorted_possible_undos(rules)
+    rules.sort_by{|r| -r.rs.length}.map{|rule| scan(rule.rs).map{|i| unapply_at(i,rule)}}.flatten
   end
 
   def leftmost_possible_undos(rules)
     rules.map{|rule| unapply(rule)}.compact
   end
-
-  def possible_last_moves(rules)
-    rules.map{|rule| scan(rule.rs).map{|i| move(rule,i)}}.flatten
-  end
-
-  def parse(start_sym,rules,derivation=[],seen_before=[])
-    return nil if seen_before.include?(self)
-    seen_before << self
-
-    possible_undos = leftmost_possible_undos(rules)
-    if self == ps([start_sym])
-      return [ps([start_sym])] + derivation.reverse
-    elsif possible_undos.empty?
-      return nil
-    else
-      try = []
-      possible_undos.select{|w| !seen_before.include?(w)}.each_with_index do |preword,i|
-        try = preword.parse(start_sym,rules,derivation + [self],seen_before)
-        return try unless try.nil?
-      end
-      return nil
-    end
-  end
-
 end

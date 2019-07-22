@@ -14,13 +14,13 @@ begin
 
   puts "The non-terminal symbols are: " + cfg.non_terminals.map(&:to_s).to_s
   puts "The terminal symbols are: " + cfg.terminals.map(&:to_s).to_s
-  puts "The start symbol is: " + cfg.start_sym.to_s
+  puts "The start symbol is: " + cfg.start_symbol.to_s
   puts "The rules are: "
   puts cfg.rules
-rescue => e
+ rescue => e
   puts "ERROR!"
   puts e.message
-# raise e
+  raise e
 end
 
 loop do
@@ -28,9 +28,8 @@ loop do
   word = $stdin.gets.chomp
   break if word == "exit"
   puts "OK, parsing \"#{word}\"..."
-  steps = cfg.parse(word)
-  if steps[0] != ps([cfg.start_sym])
-    puts steps
+  steps = cfg.parse(cfg.string_to_pseudo(word))
+  if steps.nil?
     puts "parse failed! The word #{word} is not in the language."
   else
     puts steps
