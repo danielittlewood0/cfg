@@ -261,6 +261,29 @@ describe ContextFreeGrammar do
       ]
 
     end
+
+    it 'Another Bug for palindromes' do
+      x = NonTerminal.with_char("X")
+      a = Terminal.with_char("a")
+      b = Terminal.with_char("b")
+      cfg = ContextFreeGrammar.new(
+        start_symbol: x,
+        non_terminals: [x],
+        terminals: [a,b]
+      )
+      cfg.add_string_rule!("X -> aXa")
+      cfg.add_string_rule!("X -> bXb")
+      cfg.add_string_rule!("X -> a")
+      cfg.add_string_rule!("X -> b")
+      given = PseudoString.from_string_default("ababa")
+      expect(cfg.parse(given)&.map(&:to_s)).to eq [
+        'X',
+        'aXa',
+        'abXba',
+        'ababa'
+      ]
+
+    end
   end
 
   describe "#add_string_terminal!" do

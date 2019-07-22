@@ -85,6 +85,10 @@ class PseudoString
     rules.map{|rule| scan(rule.rs).map{|i| unapply_at(i,rule)}}.flatten
   end
 
+  def sorted_possible_undos(rules)
+    rules.sort_by{|r| -r.rs.length}.map{|rule| scan(rule.rs).map{|i| unapply_at(i,rule)}}.flatten
+  end
+
   def leftmost_possible_undos(rules)
     rules.map{|rule| unapply(rule)}.compact
   end
